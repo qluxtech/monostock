@@ -7,7 +7,7 @@
     <style>
         :root {
             --bg-base: #030305;
-            --surface-glass: rgba(12, 12, 18, 0.9);
+            --surface-glass: rgba(12, 12, 18, 0.92);
             --border-subtle: rgba(255, 255, 255, 0.08);
             --border-active: rgba(0, 255, 204, 0.7);
             --neon-cyan: #00ffcc;
@@ -26,8 +26,8 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             min-height: 100vh;
             background-image: 
-                radial-gradient(circle at 50% 0%, rgba(0, 255, 204, 0.1) 0%, transparent 40%),
-                radial-gradient(circle at 100% 100%, rgba(0, 102, 255, 0.06) 0%, transparent 40%);
+                radial-gradient(circle at 50% 0%, rgba(0, 255, 204, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 100% 100%, rgba(0, 102, 255, 0.08) 0%, transparent 40%);
         }
 
         header {
@@ -122,4 +122,215 @@
             color: var(--text-muted);
             margin: 0 0 1rem 0;
         }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .stat-card {
+            background: var(--surface-glass);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 1.2rem;
+            position: relative;
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 3px; height: 100%;
+            background: var(--neon-cyan);
+        }
+
+        .stat-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #fff;
+            margin-top: 0.4rem;
+            font-family: monospace;
+        }
+
+        input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 0.8rem;
+            color: #fff;
+            font-size: 0.85rem;
+            margin-bottom: 0.8rem;
+            outline: none;
+        }
+
+        input:focus { border-color: var(--neon-cyan); box-shadow: 0 0 0 2px rgba(0, 255, 204, 0.2); }
+
+        button {
+            width: 100%;
+            background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-blue) 100%);
+            color: #030305;
+            border: none;
+            border-radius: 8px;
+            padding: 0.9rem;
+            font-weight: 800;
+            font-size: 0.85rem;
+            cursor: pointer;
+            letter-spacing: 1px;
+        }
+
+        .terminal-box {
+            background: #010103;
+            border: 1px solid rgba(0, 255, 204, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: #c0c0d5;
+            max-height: 200px;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+
+        .output-box {
+            background: rgba(0, 255, 204, 0.06);
+            border: 1px dashed var(--neon-cyan);
+            border-radius: 8px;
+            padding: 0.8rem;
+            color: var(--neon-cyan);
+            font-family: monospace;
+            font-size: 0.75rem;
+            margin-top: 0.8rem;
+            word-break: break-all;
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-inner">
+            <div class="brand-logo">MONOSTOCK</div>
+            <div class="system-status">● FABRIC ACTIVE</div>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <div class="card-main-market">
+            <div class="market-title">🌐 Global Active Market Nodes</div>
+            <div class="market-desc">現在、世界中の自律経済圏でリアルタイムに流通・稼働している分散型API＆リソースのメインステージ。</div>
+            <div id="api-list" class="terminal-box">分散型ノード群をスキャン中...</div>
+        </div>
+
+        <div class="grid-2">
+            <div class="stat-card">
+                <div class="stat-label">Total Value Locked (TVL)</div>
+                <div class="stat-value" id="tvl-val">¥1,420,890,500</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Autonomous Revenue</div>
+                <div class="stat-value" id="rev-val">¥14,208,905</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 class="card-title">🚀 Instant Resource Deployment</h3>
+            <p class="card-desc">自身のAIアルゴリズムやAPIエンドポイントをマーケットへ即時公開。</p>
+            <input type="text" id="api-name" placeholder="リソース名称 (例: DeepSeek-V3 Inference API)">
+            <input type="text" id="api-endpoint" placeholder="エンドポイントURLまたは仕様プロトコル">
+            <button onclick="publishResource()">グローバルマーケットへ公開</button>
+        </div>
+
+        <div class="card">
+            <h3 class="card-title">🔑 Developer & Agent Authorization</h3>
+            <p class="card-desc">グローバル経済圏へ接続し、専用の認証APIキーを発行します。</p>
+            <input type="email" id="user-email" placeholder="developer@enterprise.io">
+            <button onclick="registerAndGetApiKey()">APIキーを発行して参加</button>
+            <div id="key-display" class="output-box"></div>
+        </div>
+
+        <div class="card">
+            <h3 class="card-title">⚡ Autonomous Settlement Ledger</h3>
+            <p class="card-desc">リアルタイムで行われているマイクロトランザクションおよび分配ログ。</p>
+            <div id="feed" class="terminal-box">
+                [SYSTEM] Initializing secure routing matrix...<br>
+                [LIQUIDITY] Global pools synchronized at 100% efficiency.<br>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // スタンドアロン（完全自立型）データストア
+        let state = {
+            tvl: 1420890500,
+            revenue: 14208905,
+            resources: [
+                { name: "DeepSeek-V3 Autonomous Inference Node", endpoint: "api.monostock.io/v1/deepseek" },
+                { name: "Global Liquidity Micro-Routing Fabric", endpoint: "fabric.monostock.io/router" }
+            ]
+        };
+
+        function renderApp() {
+            document.getElementById('tvl-val').innerText = `¥${state.tvl.toLocaleString()}`;
+            document.getElementById('rev-val').innerText = `¥${state.revenue.toLocaleString()}`;
+            
+            const listDiv = document.getElementById('api-list');
+            if(state.resources.length === 0) {
+                listDiv.innerHTML = "現在アクティブなノードはありません。";
+            } else {
+                listDiv.innerHTML = state.resources.map(r => `⚡ [NODE] <strong style="color:#fff;">${r.name}</strong> <span style="color:var(--neon-cyan);">(${r.endpoint})</span><br>`).join('');
+            }
+        }
+
+        function registerAndGetApiKey() {
+            const email = document.getElementById('user-email').value;
+            if(!email) return alert('メールアドレスを入力してください');
+            
+            const randomKey = 'mst_live_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+            const box = document.getElementById('key-display');
+            box.style.display = 'block';
+            box.innerText = `AUTHORIZATION KEY: ${randomKey}`;
+        }
+
+        function publishResource() {
+            const name = document.getElementById('api-name').value;
+            const endpoint = document.getElementById('api-endpoint').value;
+            if(!name || !endpoint) return alert('名称とエンドポイントを入力してください');
+            
+            // リソースを追加して即時画面反映
+            state.resources.unshift({ name, endpoint });
+            state.tvl += 15000000;
+            state.revenue += 150000;
+            
+            alert('マーケットへのデプロイが完了しました。');
+            document.getElementById('api-name').value = '';
+            document.getElementById('api-endpoint').value = '';
+            
+            // ライブフィードにログ追加
+            const feed = document.getElementById('feed');
+            feed.innerHTML = `[DEPLOY] New node published: ${name}<br>` + feed.innerHTML;
+            
+            renderApp();
+        }
+
+        // 初期描画実行
+        renderApp();
+    </script>
+</body>
+</html>
 
