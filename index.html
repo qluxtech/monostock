@@ -239,11 +239,11 @@
         <div class="grid-2">
             <div class="stat-card">
                 <div class="stat-label">Total Value Locked (TVL)</div>
-                <div class="stat-value" id="tvl-val">¥1,420,890,500</div>
+                <div class="stat-value" id="tvl-val">読み込み中...</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">Autonomous Revenue</div>
-                <div class="stat-value" id="rev-val">¥14,208,905</div>
+                <div class="stat-value" id="rev-val">読み込み中...</div>
             </div>
         </div>
 
@@ -275,62 +275,72 @@
     </div>
 
     <script>
-        // スタンドアロン（完全自立型）データストア
-        let state = {
-            tvl: 1420890500,
-            revenue: 14208905,
-            resources: [
-                { name: "DeepSeek-V3 Autonomous Inference Node", endpoint: "api.monostock.io/v1/deepseek" },
-                { name: "Global Liquidity Micro-Routing Fabric", endpoint: "fabric.monostock.io/router" }
-            ]
-        };
-
-        function renderApp() {
-            document.getElementById('tvl-val').innerText = `¥${state.tvl.toLocaleString()}`;
-            document.getElementById('rev-val').innerText = `¥${state.revenue.toLocaleString()}`;
-            
-            const listDiv = document.getElementById('api-list');
-            if(state.resources.length === 0) {
-                listDiv.innerHTML = "現在アクティブなノードはありません。";
-            } else {
-                listDiv.innerHTML = state.resources.map(r => `⚡ [NODE] <strong style="color:#fff;">${r.name}</strong> <span style="color:var(--neon-cyan);">(${r.endpoint})</span><br>`).join('');
+        async function fetchMetrics() {
+            try {
+                const res = await fetch('/api/v1/metrics');
+                const data = await res.json();
+                document.getElementById('tvl-val').innerText = `¥${data.tvl.toLocaleString()}`;
+                document.getElementById('rev-val').innerText = `¥${data.revenue.toLocaleString()}`;
+                
+                const listDiv = document.getElementById('api-list');
+                if(!data.resources || data.resources.length === 0) {
+                    listDiv.innerHTML = "現在アクティブなノードはありません。";
+                } else {
+                    listDiv.innerHTML = data.resources.map(r => `⚡ [NODE] <strong style="color:#fff;">${r.name}</strong> <span style="color:var(--neon-cyan);">(${r.endpoint})</span><br>`).join('');
+                }
+            } catch(e) { 
+                console.error(e); 
             }
         }
 
-        function registerAndGetApiKey() {
+        async function registerAndGetApiKey() {
             const email = document.getElementById('user-email').value;
             if(!email) return alert('メールアドレスを入力してください');
             
-            const randomKey = 'mst_live_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-            const box = document.getElementById('key-display');
-            box.style.display = 'block';
-            box.innerText = `AUTHORIZATION KEY: ${randomKey}`;
+            try {
+                const res = await fetch('/api/v1/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                const data = await res.json();
+                const box = document.getElementById('key-display');
+                box.style.display = 'block';
+                box.innerText = `AUTHORIZATION KEY: ${data.apiKey}`;
+            } catch(e) {
+                alert('APIキー発行に失敗しました。');
+            }
         }
 
-        function publishResource() {
+        async function publishResource() {
             const name = document.getElementById('api-name').value;
             const endpoint = document.getElementById('api-endpoint').value;
             if(!name || !endpoint) return alert('名称とエンドポイントを入力してください');
             
-            // リソースを追加して即時画面反映
-            state.resources.unshift({ name, endpoint });
-            state.tvl += 15000000;
-            state.revenue += 150000;
-            
-            alert('マーケットへのデプロイが完了しました。');
-            document.getElementById('api-name').value = '';
-            document.getElementById('api-endpoint').value = '';
-            
-            // ライブフィードにログ追加
-            const feed = document.getElementById('feed');
-            feed.innerHTML = `[DEPLOY] New node published: ${name}<br>` + feed.innerHTML;
-            
-            renderApp();
+            try {
+                const res = await fetch('/api/v1/publish', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, endpoint, owner: 'creator' })
+                });
+                const data = await res.json();
+                if(data.success) {
+                    alert('マーケットへのデプロイが完了しました。');
+                    document.getElementById('api-name').value = '';
+                    document.getElementById('api-endpoint').value = '';
+                    
+                    const feed = document.getElementById('feed');
+                    feed.innerHTML = `[DEPLOY] New node published: ${name}<br>` + feed.innerHTML;
+                    
+                    fetchMetrics();
+                }
+            } catch(e) {
+                alert('デプロイに失敗しました。');
+            }
         }
 
-        // 初期描画実行
-        renderApp();
+        setInterval(fetchMetrics, 3000);
+        fetchMetrics();
     </script>
 </body>
 </html>
-
