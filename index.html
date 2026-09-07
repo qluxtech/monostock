@@ -5,74 +5,117 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monostock - Autonomous Global Economy Fabric</title>
     <style>
-        :root { bg: #0a0a0c; accent: #00ffcc; text: #f0f0f5; }
+        :root { background: #0a0a0c; color: #f0f0f5; accent: #00ffcc; }
         body { margin: 0; padding: 0; background-color: #0a0a0c; color: #f0f0f5; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        header { padding: 2rem; text-align: center; border-bottom: 1px solid #222; }
-        h1 { font-size: 1.8rem; color: #00ffcc; margin: 0; letter-spacing: 2px; }
-        .container { max-width: 800px; margin: 0 auto; padding: 1.5rem; }
-        .card { background: #121218; border: 1px solid #2a2a35; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
-        button { background: #00ffcc; color: #0a0a0c; border: none; padding: 0.8rem 1.5rem; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; font-size: 1rem; transition: opacity 0.2s; }
+        header { padding: 1.5rem; text-align: center; border-bottom: 1px solid #222; }
+        h1 { font-size: 1.6rem; color: #00ffcc; margin: 0; letter-spacing: 2px; }
+        .container { max-width: 800px; margin: 0 auto; padding: 1rem; }
+        .card { background: #121218; border: 1px solid #2a2a35; border-radius: 12px; padding: 1.2rem; margin-bottom: 1.2rem; }
+        input, button { width: 100%; box-sizing: border-box; padding: 0.75rem; margin-top: 0.5rem; border-radius: 6px; font-size: 0.95rem; }
+        input { background: #050507; border: 1px solid #333; color: #fff; }
+        button { background: #00ffcc; color: #0a0a0c; border: none; font-weight: bold; cursor: pointer; }
         button:hover { opacity: 0.85; }
         .stats { display: flex; justify-content: space-between; text-align: center; }
-        .stat-box { flex: 1; padding: 0.5rem; }
-        .stat-value { font-size: 1.4rem; color: #00ffcc; font-weight: bold; }
-        #feed { font-family: monospace; font-size: 0.85rem; max-height: 150px; overflow-y: auto; color: #888; background: #050507; padding: 1rem; border-radius: 6px; }
-        .viral-box { background: linear-gradient(135deg, #121218, #1a1a2e); border: 1px solid #00ffcc; }
+        .stat-box { flex: 1; padding: 0.3rem; }
+        .stat-value { font-size: 1.2rem; color: #00ffcc; font-weight: bold; }
+        #feed, #api-list { font-family: monospace; font-size: 0.8rem; max-height: 120px; overflow-y: auto; color: #888; background: #050507; padding: 0.8rem; border-radius: 6px; margin-top: 0.5rem; }
     </style>
 </head>
 <body>
     <header>
         <h1>MONOSTOCK</h1>
-        <p style="color: #666; font-size: 0.85rem; margin-top: 0.5rem;">Autonomous Asset & API Exchange Fabric</p>
+        <p style="color: #666; font-size: 0.8rem; margin-top: 0.3rem;">Autonomous Global Economy Fabric</p>
     </header>
 
     <div class="container">
-        <!-- ライブ統計 -->
+        <!-- リアルタイム経済統計 -->
         <div class="card stats">
             <div class="stat-box">
                 <div>総流通総額 (TVL)</div>
-                <div class="stat-value" id="tvl">¥1,420,890,500</div>
+                <div class="stat-value" id="tvl-val">読み込み中...</div>
             </div>
             <div class="stat-box">
-                <div>システム自動徴収益</div>
-                <div class="stat-value" id="revenue">¥14,208,905</div>
+                <div>システム自動収益</div>
+                <div class="stat-value" id="rev-val">読み込み中...</div>
             </div>
         </div>
 
-        <!-- 自動バイラルシェア（勝手に拡散される仕組み） -->
-        <div class="card viral-box">
-            <h3 style="margin-top: 0; color: #00ffcc;">🔥 バイラル・ブースト起動</h3>
-            <p style="font-size: 0.9rem; color: #aaa;">あなたの专属リンクを他者に踏ませることで、全トランザクションから永続的に「自動紹介報酬（リファラル・ディビデンド）」がチャリンと加算されます。</p>
-            <button onclick="generateViralLink()">専用マイニングリンクを発行</button>
-            <p id="viral-link-display" style="word-break: break-all; color: #00ffcc; font-size: 0.85rem; margin-top: 1rem;"></p>
-        </div>
-
-        <!-- リアルタイムトランザクションフィード -->
+        <!-- 1. アカウント登録 & APIキー発行 -->
         <div class="card">
-            <h3 style="margin-top: 0; font-size: 1rem;">⚡ リアルタイム自律経済ログ</h3>
-            <div id="feed">
-                [SYSTEM] Initializing global micro-routing nodes...<br>
-                [AUTONOMOUS_TX] Asset routed successfully. Fee collected.<br>
-            </div>
+            <h3 style="margin-top: 0; color: #00ffcc; font-size: 1rem;">🔑 開発者・エージェント登録 (APIキー発行)</h3>
+            <input type="email" id="user-email" placeholder="メールアドレスを入力 (例: user@example.com)">
+            <button onclick="registerAndGetApiKey()">エコシステム参加 ＆ キー発行</button>
+            <p id="key-display" style="word-break: break-all; color: #00ffcc; font-size: 0.8rem; margin-top: 0.5rem;"></p>
+        </div>
+
+        <!-- 3. スマホからのワンタッチAPI・リソース出品 -->
+        <div class="card">
+            <h3 style="margin-top: 0; color: #00ffcc; font-size: 1rem;">🚀 リソース・API自動出品</h3>
+            <input type="text" id="api-name" placeholder="API / リソース名 (例: AI高速OCRエンジン)">
+            <input type="text" id="api-endpoint" placeholder="エンドポイントURLまたは仕様概要">
+            <button onclick="publishResource()">マーケットへ瞬時デプロイ</button>
+        </div>
+
+        <!-- APIマーケット一覧パネル -->
+        <div class="card">
+            <h3 style="margin-top: 0; font-size: 1rem;">📦 流通中APIマーケット一覧</h3>
+            <div id="api-list">読み込み中...</div>
+        </div>
+
+        <!-- 2. リアルタイム自律経済ログ -->
+        <div class="card">
+            <h3 style="margin-top: 0; font-size: 1rem;">⚡ ライブ経済・決済ログ</h3>
+            <div id="feed">接続確立中...</div>
         </div>
     </div>
 
     <script>
-        function generateViralLink() {
-            const randomId = Math.random().toString(36.substring(2, 10));
-            const link = `https://monostock.io/?ref=${randomId}`;
-            document.getElementById('viral-link-display').innerText = `拡散リンク: ${link} （※このリンク経由の流通益の0.2%が自動であなたのものになります）`;
-            navigator.clipboard.writeText(link);
-            alert('バイラルリンクをコピーしました！SNSや開発者コミュニティにばら撒くほど自動で不労所得が増殖します。');
+        // バックエンドから統計とマーケット一覧を取得
+        async function fetchMetrics() {
+            try {
+                const res = await fetch('/api/v1/metrics');
+                const data = await res.json();
+                document.getElementById('tvl-val').innerText = `¥${data.tvl.toLocaleString()}`;
+                document.getElementById('rev-val').innerText = `¥${data.revenue.toLocaleString()}`;
+                
+                const listDiv = document.getElementById('api-list');
+                if(data.resources.length === 0) {
+                    listDiv.innerHTML = "現在出品されているリソースはありません。上のフォームから最初のパーツをデプロイしてください。";
+                } else {
+                    listDiv.innerHTML = data.resources.map(r => `[API] ${r.name} (By: ${r.owner})<br>`).join('');
+                }
+            } catch(e) { console.error(e); }
         }
 
-        // リアルタイムログのシミュレーション
-        setInterval(() => {
-            const feed = document.getElementById('feed');
-            const txId = 'tx_' + Math.random().toString(36).substring(2, 9);
-            const amount = (Math.random() * 50).toFixed(4);
-            feed.innerHTML = `[SETTLED] ${txId} - Routed ${amount} MONO (Fee auto-deducted)<br>` + feed.innerHTML;
-        }, 3000);
+        async function registerAndGetApiKey() {
+            const email = document.getElementById('user-email').value;
+            if(!email) return alert('メールアドレスを入力してください');
+            const res = await fetch('/api/v1/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+            const data = await res.json();
+            document.getElementById('key-display').innerText = `発行されたAPIキー: ${data.apiKey} （※極秘保存してください）`;
+        }
+
+        async function publishResource() {
+            const name = document.getElementById('api-name').value;
+            const endpoint = document.getElementById('api-endpoint').value;
+            if(!name || !endpoint) return alert('名称とエンドポイントを入力してください');
+            
+            const res = await fetch('/api/v1/publish', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, endpoint, owner: 'anonymous_dev' })
+            });
+            const data = await res.json();
+            alert('マーケットへの自動デプロイが完了しました！');
+            fetchMetrics();
+        }
+
+        setInterval(fetchMetrics, 4000);
+        fetchMetrics();
     </script>
 </body>
 </html>
