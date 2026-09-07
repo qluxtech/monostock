@@ -7,10 +7,9 @@
     <style>
         :root {
             --bg-base: #030305;
-            --surface: #0a0a0f;
-            --surface-glass: rgba(12, 12, 18, 0.85);
+            --surface-glass: rgba(12, 12, 18, 0.9);
             --border-subtle: rgba(255, 255, 255, 0.08);
-            --border-active: rgba(0, 255, 204, 0.5);
+            --border-active: rgba(0, 255, 204, 0.7);
             --neon-cyan: #00ffcc;
             --neon-blue: #0066ff;
             --text-main: #f4f4f8;
@@ -24,18 +23,17 @@
             padding: 0;
             background-color: var(--bg-base);
             color: var(--text-main);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             min-height: 100vh;
             background-image: 
-                radial-gradient(circle at 50% 0%, rgba(0, 255, 204, 0.07) 0%, transparent 50%),
-                radial-gradient(circle at 100% 100%, rgba(0, 102, 255, 0.05) 0%, transparent 40%);
-            -webkit-font-smoothing: antialiased;
+                radial-gradient(circle at 50% 0%, rgba(0, 255, 204, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 100% 100%, rgba(0, 102, 255, 0.06) 0%, transparent 40%);
         }
 
         header {
-            padding: 1.8rem 1.2rem 1.2rem 1.2rem;
+            padding: 1.2rem 1rem;
             border-bottom: 1px solid var(--border-subtle);
-            background: rgba(3, 3, 5, 0.85);
+            background: rgba(3, 3, 5, 0.95);
             backdrop-filter: blur(20px);
             position: sticky;
             top: 0;
@@ -54,324 +52,74 @@
             font-size: 1.4rem;
             font-weight: 900;
             letter-spacing: 3px;
-            background: linear-gradient(135deg, #fff 30%, var(--neon-cyan) 100%);
+            background: linear-gradient(135deg, #fff 20%, var(--neon-cyan) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .system-status {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: var(--neon-cyan);
-            background: rgba(0, 255, 204, 0.08);
+            background: rgba(0, 255, 204, 0.12);
             padding: 4px 10px;
             border-radius: 20px;
-            border: 1px solid rgba(0, 255, 204, 0.2);
+            border: 1px solid rgba(0, 255, 204, 0.4);
             font-family: monospace;
-        }
-
-        .pulse-dot {
-            width: 6px;
-            height: 6px;
-            background: var(--neon-cyan);
-            border-radius: 50%;
-            box-shadow: 0 0 8px var(--neon-cyan);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.4; transform: scale(0.85); }
-            100% { opacity: 1; transform: scale(1); }
+            font-weight: 700;
         }
 
         .container {
             max-width: 900px;
             margin: 0 auto;
-            padding: 1.2rem;
+            padding: 1.2rem 1rem;
         }
 
-        /* メイン・マーケットステージ（最上位の超強調カード） */
+        /* 👑 【顔】最上部メインステージ：グローバルマーケット一覧 */
         .card-main-market {
-            background: linear-gradient(135deg, rgba(12, 12, 18, 0.95) 0%, rgba(10, 25, 35, 0.95) 100%);
-            backdrop-filter: blur(16px);
-            border: 1px solid var(--border-active);
-            border-radius: 16px;
-            padding: 1.6rem;
+            background: linear-gradient(135deg, rgba(12, 22, 35, 0.98) 0%, rgba(8, 12, 20, 0.98) 100%);
+            border: 2px solid var(--border-active);
+            border-radius: 18px;
+            padding: 1.8rem;
             margin-bottom: 1.2rem;
-            box-shadow: 0 12px 40px rgba(0, 255, 204, 0.15);
+            box-shadow: 0 16px 50px rgba(0, 255, 204, 0.25);
+        }
+
+        .market-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--neon-cyan);
+            margin: 0 0 0.4rem 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .market-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin: 0 0 1.2rem 0;
+            line-height: 1.5;
         }
 
         .card {
             background: var(--surface-glass);
-            backdrop-filter: blur(12px);
             border: 1px solid var(--border-subtle);
             border-radius: 14px;
             padding: 1.4rem;
             margin-bottom: 1.2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            transition: border-color 0.2s ease;
-        }
-
-        .card:hover {
-            border-color: var(--border-active);
         }
 
         .card-title {
             font-size: 0.9rem;
             font-weight: 700;
             color: var(--text-main);
-            margin: 0 0 0.4rem 0;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            margin: 0 0 0.3rem 0;
         }
 
         .card-desc {
             font-size: 0.75rem;
             color: var(--text-muted);
             margin: 0 0 1rem 0;
-            line-height: 1.4;
         }
-
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-bottom: 1.2rem;
-        }
-
-        .stat-card {
-            background: var(--surface-glass);
-            border: 1px solid var(--border-subtle);
-            border-radius: 14px;
-            padding: 1.2rem;
-            text-align: left;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 3px; height: 100%;
-            background: var(--neon-cyan);
-        }
-
-        .stat-label {
-            font-size: 0.65rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            font-weight: 600;
-        }
-
-        .stat-value {
-            font-size: 1.15rem;
-            font-weight: 800;
-            color: #fff;
-            margin-top: 0.4rem;
-            font-family: monospace;
-            letter-spacing: -0.5px;
-        }
-
-        .input-group {
-            margin-bottom: 0.8rem;
-        }
-
-        input {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            padding: 0.75rem 0.9rem;
-            color: #fff;
-            font-size: 0.85rem;
-            outline: none;
-            transition: all 0.2s;
-        }
-
-        input:focus {
-            border-color: var(--neon-cyan);
-            box-shadow: 0 0 0 2px rgba(0, 255, 204, 0.15);
-        }
-
-        button {
-            width: 100%;
-            background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-blue) 100%);
-            color: #030305;
-            border: none;
-            border-radius: 8px;
-            padding: 0.85rem;
-            font-weight: 800;
-            font-size: 0.85rem;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: opacity 0.2s, transform 0.1s;
-        }
-
-        button:active { transform: scale(0.98); }
-        button:hover { opacity: 0.9; }
-
-        .terminal-box {
-            background: #020204;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 8px;
-            padding: 0.9rem;
-            font-family: monospace;
-            font-size: 0.75rem;
-            color: #a0a0b5;
-            max-height: 180px;
-            overflow-y: auto;
-            line-height: 1.6;
-        }
-
-        .terminal-box::-webkit-scrollbar { width: 3px; }
-        .terminal-box::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 3px; }
-
-        .output-box {
-            background: rgba(0, 255, 204, 0.04);
-            border: 1px dashed rgba(0, 255, 204, 0.3);
-            border-radius: 8px;
-            padding: 0.8rem;
-            color: var(--neon-cyan);
-            font-family: monospace;
-            font-size: 0.75rem;
-            margin-top: 0.8rem;
-            word-break: break-all;
-            display: none;
-        }
-
-        @media (max-width: 600px) {
-            .grid-2 { grid-template-columns: 1fr; }
-        }
-    </style>
-</head>
-<body>
-
-    <header>
-        <div class="header-inner">
-            <div class="brand-logo">MONOSTOCK</div>
-            <div class="system-status">
-                <div class="pulse-dot"></div>
-                FABRIC ACTIVE
-            </div>
-        </div>
-    </header>
-
-    <div class="container">
-        
-        <!-- 🔥 1. 【最メイン配置】流通中グローバルマーケット一覧 -->
-        <div class="card-main-market">
-            <h3 class="card-title" style="font-size: 1.05rem; color: var(--neon-cyan);">
-                🌐 Global Active Market Nodes
-            </h3>
-            <p class="card-desc">現在グローバル経済圏でリアルタイムに流通・稼働している分散型API＆リソースのメインステージ。</p>
-            <div id="api-list" class="terminal-box" style="background: rgba(0,0,0,0.5);">分散型ノード群をスキャン中...</div>
-        </div>
-
-        <!-- 2. リアルタイム経済指標 -->
-        <div class="grid-2">
-            <div class="stat-card">
-                <div class="stat-label">Total Value Locked (TVL)</div>
-                <div class="stat-value" id="tvl-val">¥1,420,890,500</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Autonomous Revenue</div>
-                <div class="stat-value" id="rev-val">¥14,208,905</div>
-            </div>
-        </div>
-
-        <!-- 3. リソース出品コンソール -->
-        <div class="card">
-            <h3 class="card-title">🚀 Instant Resource Deployment</h3>
-            <p class="card-desc">自身のAIアルゴリズムやAPIエンドポイントをマーケットへ即時デプロイ。</p>
-            <div class="input-group">
-                <input type="text" id="api-name" placeholder="リソース名称 (例: DeepSeek-V3 Inference API)">
-            </div>
-            <div class="input-group">
-                <input type="text" id="api-endpoint" placeholder="エンドポイントURLまたは仕様プロトコル">
-            </div>
-            <button onclick="publishResource()">グローバルマーケットへ公開</button>
-        </div>
-
-        <!-- 4. 開発者登録コンソール -->
-        <div class="card">
-            <h3 class="card-title">🔑 Developer & Agent Authorization</h3>
-            <p class="card-desc">グローバル自律経済圏へ接続し、専用の認証APIキーを発行します。</p>
-            <div class="input-group">
-                <input type="email" id="user-email" placeholder="developer@enterprise.io">
-            </div>
-            <button onclick="registerAndGetApiKey()">APIキーを発行して参加</button>
-            <div id="key-display" class="output-box"></div>
-        </div>
-
-        <!-- 5. ライブ決済ログ -->
-        <div class="card">
-            <h3 class="card-title">⚡ Autonomous Settlement Ledger</h3>
-            <p class="card-desc">リアルタイムで行われているマイクロトランザクションおよび分配ログ。</p>
-            <div id="feed" class="terminal-box">
-                [SYSTEM] Initializing secure routing matrix...<br>
-                [LIQUIDITY] Global pools synchronized at 100% efficiency.<br>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        async function fetchMetrics() {
-            try {
-                const res = await fetch('/api/v1/metrics');
-                const data = await res.json();
-                document.getElementById('tvl-val').innerText = `¥${data.tvl.toLocaleString()}`;
-                document.getElementById('rev-val').innerText = `¥${data.revenue.toLocaleString()}`;
-                
-                const listDiv = document.getElementById('api-list');
-                if(!data.resources || data.resources.length === 0) {
-                    listDiv.innerHTML = "現在アクティブなノードはありません。下部のフォームから最初の資産をデプロイしてください。";
-                } else {
-                    listDiv.innerHTML = data.resources.map(r => `⚡ [NODE] <span style="color:#fff; font-weight:bold;">${r.name}</span> <span style="color:var(--neon-cyan);">(${r.endpoint})</span><br>`).join('');
-                }
-            } catch(e) {
-                console.error(e);
-            }
-        }
-
-        async function registerAndGetApiKey() {
-            const email = document.getElementById('user-email').value;
-            if(!email) return alert('メールアドレスを入力してください');
-            
-            const res = await fetch('/api/v1/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email })
-            });
-            const data = await res.json();
-            const box = document.getElementById('key-display');
-            box.style.display = 'block';
-            box.innerText = `AUTHORIZATION KEY: ${data.apiKey}`;
-        }
-
-        async function publishResource() {
-            const name = document.getElementById('api-name').value;
-            const endpoint = document.getElementById('api-endpoint').value;
-            if(!name || !endpoint) return alert('名称とエンドポイントを入力してください');
-            
-            await fetch('/api/v1/publish', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, endpoint, owner: 'verified_node' })
-            });
-            alert('マーケットへのデプロイが完了しました。');
-            document.getElementById('api-name').value = '';
-            document.getElementById('api-endpoint').value = '';
-            fetchMetrics();
-        }
-
-        setInterval(fetchMetrics, 3000);
-        fetchMetrics();
-    </script>
-</body>
-</html>
 
