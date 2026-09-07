@@ -10,7 +10,7 @@
             --surface: #0a0a0f;
             --surface-glass: rgba(12, 12, 18, 0.85);
             --border-subtle: rgba(255, 255, 255, 0.08);
-            --border-active: rgba(0, 255, 204, 0.4);
+            --border-active: rgba(0, 255, 204, 0.5);
             --neon-cyan: #00ffcc;
             --neon-blue: #0066ff;
             --text-main: #f4f4f8;
@@ -27,16 +27,15 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             min-height: 100vh;
             background-image: 
-                radial-gradient(circle at 50% 0%, rgba(0, 255, 204, 0.06) 0%, transparent 50%),
-                radial-gradient(circle at 100% 100%, rgba(0, 102, 255, 0.04) 0%, transparent 40%);
+                radial-gradient(circle at 50% 0%, rgba(0, 255, 204, 0.07) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(0, 102, 255, 0.05) 0%, transparent 40%);
             -webkit-font-smoothing: antialiased;
         }
 
-        /* ヘッダーの格調高い設計 */
         header {
-            padding: 2rem 1.2rem 1.2rem 1.2rem;
+            padding: 1.8rem 1.2rem 1.2rem 1.2rem;
             border-bottom: 1px solid var(--border-subtle);
-            background: rgba(3, 3, 5, 0.8);
+            background: rgba(3, 3, 5, 0.85);
             backdrop-filter: blur(20px);
             position: sticky;
             top: 0;
@@ -94,12 +93,15 @@
             padding: 1.2rem;
         }
 
-        /* 超高級カードデザイン */
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-bottom: 1rem;
+        /* メイン・マーケットステージ（最上位の超強調カード） */
+        .card-main-market {
+            background: linear-gradient(135deg, rgba(12, 12, 18, 0.95) 0%, rgba(10, 25, 35, 0.95) 100%);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-active);
+            border-radius: 16px;
+            padding: 1.6rem;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 12px 40px rgba(0, 255, 204, 0.15);
         }
 
         .card {
@@ -108,7 +110,7 @@
             border: 1px solid var(--border-subtle);
             border-radius: 14px;
             padding: 1.4rem;
-            margin-bottom: 1rem;
+            margin-bottom: 1.2rem;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             transition: border-color 0.2s ease;
         }
@@ -118,7 +120,7 @@
         }
 
         .card-title {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: 700;
             color: var(--text-main);
             margin: 0 0 0.4rem 0;
@@ -134,7 +136,13 @@
             line-height: 1.4;
         }
 
-        /* 経済指標パネルの洗練 */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+        }
+
         .stat-card {
             background: var(--surface-glass);
             border: 1px solid var(--border-subtle);
@@ -169,7 +177,6 @@
             letter-spacing: -0.5px;
         }
 
-        /* フォーム要素の最適化 */
         .input-group {
             margin-bottom: 0.8rem;
         }
@@ -208,7 +215,6 @@
         button:active { transform: scale(0.98); }
         button:hover { opacity: 0.9; }
 
-        /* ターミナル・リスト表示 */
         .terminal-box {
             background: #020204;
             border: 1px solid rgba(255, 255, 255, 0.06);
@@ -217,9 +223,9 @@
             font-family: monospace;
             font-size: 0.75rem;
             color: #a0a0b5;
-            max-height: 150px;
+            max-height: 180px;
             overflow-y: auto;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
         .terminal-box::-webkit-scrollbar { width: 3px; }
@@ -256,7 +262,17 @@
     </header>
 
     <div class="container">
-        <!-- リアルタイム経済統計 (2カラム精密配置) -->
+        
+        <!-- 🔥 1. 【最メイン配置】流通中グローバルマーケット一覧 -->
+        <div class="card-main-market">
+            <h3 class="card-title" style="font-size: 1.05rem; color: var(--neon-cyan);">
+                🌐 Global Active Market Nodes
+            </h3>
+            <p class="card-desc">現在グローバル経済圏でリアルタイムに流通・稼働している分散型API＆リソースのメインステージ。</p>
+            <div id="api-list" class="terminal-box" style="background: rgba(0,0,0,0.5);">分散型ノード群をスキャン中...</div>
+        </div>
+
+        <!-- 2. リアルタイム経済指標 -->
         <div class="grid-2">
             <div class="stat-card">
                 <div class="stat-label">Total Value Locked (TVL)</div>
@@ -268,18 +284,7 @@
             </div>
         </div>
 
-        <!-- 開発者登録コンソール -->
-        <div class="card">
-            <h3 class="card-title">🔑 Developer & Agent Authorization</h3>
-            <p class="card-desc">グローバル自律経済圏へ接続し、専用の認証APIキーを発行します。</p>
-            <div class="input-group">
-                <input type="email" id="user-email" placeholder="developer@enterprise.io">
-            </div>
-            <button onclick="registerAndGetApiKey()">APIキーを発行して参加</button>
-            <div id="key-display" class="output-box"></div>
-        </div>
-
-        <!-- リソース出品コンソール -->
+        <!-- 3. リソース出品コンソール -->
         <div class="card">
             <h3 class="card-title">🚀 Instant Resource Deployment</h3>
             <p class="card-desc">自身のAIアルゴリズムやAPIエンドポイントをマーケットへ即時デプロイ。</p>
@@ -292,14 +297,18 @@
             <button onclick="publishResource()">グローバルマーケットへ公開</button>
         </div>
 
-        <!-- 流通中マーケット一覧 -->
+        <!-- 4. 開発者登録コンソール -->
         <div class="card">
-            <h3 class="card-title">📦 Active Market Nodes</h3>
-            <p class="card-desc">現在稼働中で自動決済が紐づいている分散型リソース一覧。</p>
-            <div id="api-list" class="terminal-box">接続ノードをスキャン中...</div>
+            <h3 class="card-title">🔑 Developer & Agent Authorization</h3>
+            <p class="card-desc">グローバル自律経済圏へ接続し、専用の認証APIキーを発行します。</p>
+            <div class="input-group">
+                <input type="email" id="user-email" placeholder="developer@enterprise.io">
+            </div>
+            <button onclick="registerAndGetApiKey()">APIキーを発行して参加</button>
+            <div id="key-display" class="output-box"></div>
         </div>
 
-        <!-- ライブ決済ログ -->
+        <!-- 5. ライブ決済ログ -->
         <div class="card">
             <h3 class="card-title">⚡ Autonomous Settlement Ledger</h3>
             <p class="card-desc">リアルタイムで行われているマイクロトランザクションおよび分配ログ。</p>
@@ -320,9 +329,9 @@
                 
                 const listDiv = document.getElementById('api-list');
                 if(!data.resources || data.resources.length === 0) {
-                    listDiv.innerHTML = "アクティブなノードはありません。上のフォームから最初の資産をデプロイしてください。";
+                    listDiv.innerHTML = "現在アクティブなノードはありません。下部のフォームから最初の資産をデプロイしてください。";
                 } else {
-                    listDiv.innerHTML = data.resources.map(r => `⚡ [NODE] <span style="color:#fff;">${r.name}</span> <span style="color:var(--neon-cyan);">(${r.endpoint})</span><br>`).join('');
+                    listDiv.innerHTML = data.resources.map(r => `⚡ [NODE] <span style="color:#fff; font-weight:bold;">${r.name}</span> <span style="color:var(--neon-cyan);">(${r.endpoint})</span><br>`).join('');
                 }
             } catch(e) {
                 console.error(e);
