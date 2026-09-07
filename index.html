@@ -75,7 +75,7 @@
             padding: 1.2rem 1rem;
         }
 
-        /* 👑 【世界市場マーケットメイキング】巨大メインステージ */
+        /* 👑 世界市場マーケットメイキング ステージ */
         .market-maker-stage {
             background: linear-gradient(135deg, rgba(8, 18, 30, 0.98) 0%, rgba(4, 10, 18, 0.98) 100%);
             border: 2px solid var(--border-active);
@@ -148,7 +148,6 @@
             font-family: monospace;
         }
 
-        /* 注文板・流動性一覧テーブル */
         .orderbook-container {
             background: #010204;
             border: 1px solid rgba(0, 255, 204, 0.3);
@@ -190,7 +189,6 @@
         .node-ask { color: #ff4466; text-align: right; }
         .node-bid { color: var(--neon-green); text-align: right; }
 
-        /* 通常カード群 */
         .card {
             background: var(--surface-glass);
             border: 1px solid var(--border-subtle);
@@ -316,13 +314,13 @@
     <header>
         <div class="header-inner">
             <div class="brand-logo">MONOSTOCK</div>
-            <div class="system-status">● FABRIC ACTIVE</div>
+            <div class="system-status">● AGENTIC FABRIC ACTIVE</div>
         </div>
     </header>
 
     <div class="container">
         
-        <!-- 👑 巨大メインステージ：世界市場マーケットメイキング＆オーダーブック -->
+        <!-- 👑 世界市場マーケットメイキング＆オーダーブック -->
         <div class="market-maker-stage">
             <div class="mm-header">
                 <div class="mm-title-area">
@@ -355,19 +353,19 @@
             </div>
         </div>
 
-        <!-- 2. 経済指標 -->
+        <!-- 経済指標 -->
         <div class="grid-2">
             <div class="stat-card">
                 <div class="stat-label">Total Value Locked (TVL)</div>
-                <div class="stat-value" id="tvl-val">読み込み中...</div>
+                <div class="stat-value" id="tvl-val">¥1,420,890,500</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">Autonomous Revenue</div>
-                <div class="stat-value" id="rev-val">読み込み中...</div>
+                <div class="stat-value" id="rev-val">¥14,208,905</div>
             </div>
         </div>
 
-        <!-- 3. リソース出品 -->
+        <!-- リソース出品 -->
         <div class="card">
             <h3 class="card-title">🚀 Instant Resource Deployment</h3>
             <p class="card-desc">自身のAIアルゴリズムやAPIエンドポイントを世界市場へ即時メイキング。</p>
@@ -376,7 +374,7 @@
             <button onclick="publishResource()">世界市場へマーケットメイキング</button>
         </div>
 
-        <!-- 4. 開発者登録 -->
+        <!-- 開発者登録 -->
         <div class="card">
             <h3 class="card-title">🔑 Developer & Agent Authorization</h3>
             <p class="card-desc">グローバル経済圏へ接続し、専用の認証APIキーを発行します。</p>
@@ -385,13 +383,13 @@
             <div id="key-display" class="output-box"></div>
         </div>
 
-        <!-- 5. ライブ決済ログ -->
+        <!-- ライブ決済ログ -->
         <div class="card">
             <h3 class="card-title">⚡ Autonomous Settlement Ledger</h3>
-            <p class="card-desc">リアルタイムで行われているマイクロトランザクションおよび分配ログ。</p>
+            <p class="card-desc">リアルタイムで行われているマイクロトランザクションおよび分散ログ。</p>
             <div id="feed" class="terminal-box">
-                [SYSTEM] Initializing secure routing matrix...<br>
-                [LIQUIDITY] Global market maker synchronized.<br>
+                [SYSTEM] Initializing secure agentic routing matrix...<br>
+                [LIQUIDITY] Global market maker synchronized with AI daemon.<br>
             </div>
         </div>
 
@@ -403,10 +401,10 @@
                 const res = await fetch('/api/v1/metrics');
                 const data = await res.json();
                 
-                document.getElementById('tvl-val').innerText = `¥${data.tvl.toLocaleString()}`;
-                document.getElementById('rev-val').innerText = `¥${data.revenue.toLocaleString()}`;
-                document.getElementById('mm-spread').innerText = data.spread || "0.012%";
-                document.getElementById('mm-depth').innerText = data.liquidityDepth || "¥482,910,000";
+                if(data.tvl) document.getElementById('tvl-val').innerText = `¥${Number(data.tvl).toLocaleString()}`;
+                if(data.revenue) document.getElementById('rev-val').innerText = `¥${Number(data.revenue).toLocaleString()}`;
+                if(data.spread) document.getElementById('mm-spread').innerText = data.spread;
+                if(data.liquidityDepth) document.getElementById('mm-depth').innerText = data.liquidityDepth;
                 
                 const resources = data.resources || [];
                 document.getElementById('mm-nodes-count').innerText = resources.length;
@@ -428,7 +426,7 @@
                     `).join('');
                 }
             } catch(e) { 
-                console.error(e); 
+                console.error("Fetch metrics error:", e); 
             }
         }
 
