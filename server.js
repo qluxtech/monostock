@@ -6,7 +6,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// --- 超高速メモリデータベース（実運用ではDBへ接続） ---
+// --- 超高速メモリデータベース（実運用では永続DBへ接続） ---
 const db = {
     users: [],
     resources: [
@@ -16,16 +16,15 @@ const db = {
     metrics: {
         tvl: 1420890500,
         revenue: 14208905
-    },
-    logs: []
+    }
 };
 
-// ヘルスチェック
+// システムステータス確認
 app.get('/health', (req, res) => {
     res.status(200).json({ status: 'ACTIVE', system: 'Monostock Ultimate Fabric' });
 });
 
-// 統計 & マーケット一覧取得
+// 統計データおよび流通中APIマーケット一覧の取得
 app.get('/api/v1/metrics', (req, res) => {
     res.status(200).json({
         tvl: db.metrics.tvl,
@@ -34,7 +33,7 @@ app.get('/api/v1/metrics', (req, res) => {
     });
 });
 
-// 1. メール登録 ＆ APIキー自動発行
+// 開発者・エージェント登録 ＆ APIキー自動発行
 app.post('/api/v1/register', (req, res) => {
     const { email } = req.body;
     if (!email) return res.status(400).json({ error: 'Email is required' });
@@ -46,17 +45,22 @@ app.post('/api/v1/register', (req, res) => {
     res.status(200).json({ status: 'SUCCESS', email, apiKey });
 });
 
-// 3. リソース（API）のワンタッチ出品
+// スマホからのワンタッチAPI・リソース出品
 app.post('/api/v1/publish', (req, res) => {
     const { name, endpoint, owner } = req.body;
     if (!name || !endpoint) return res.status(400).json({ error: 'Invalid resource payload' });
 
-    const newRes = { id: 'res_' + Math.random().toString(36).substring(2, 8), name, endpoint, owner: owner || 'developer' };
-    db.resources.push(newRes);
+    const newRes = { 
+        id: 'res_' + Math.random().toString(36).substring(2, 8), 
+        name, 
+        endpoint, 
+        owner: owner || 'creator' 
+    };
+    db.resources.unshift(newRes); // 新しいものをリストの最上部に追加
 
-    // 統計データも自動加算
-    db.metrics.tvl += 50000;
-    db.metrics.revenue += 750;
+    // 流通総額とシステム収益を自動加算
+    db.metrics.tvl += 150000;
+    db.metrics.revenue += 2250;
 
     console.log(`[RESOURCE_PUBLISHED] ${name} deployed successfully.`);
     res.status(200).json({ status: 'PUBLISHED', resource: newRes });
@@ -84,7 +88,7 @@ app.post('/api/v1/autonomous-settlement', (req, res) => {
     });
 });
 
-// ルートアクセス
+// ルートアクセスに対して index.html を返す
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
