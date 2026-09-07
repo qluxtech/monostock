@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monostock - Autonomous Global Economy Fabric</title>
+    <style>
+        :root { bg: #0a0a0c; accent: #00ffcc; text: #f0f0f5; }
+        body { margin: 0; padding: 0; background-color: #0a0a0c; color: #f0f0f5; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        header { padding: 2rem; text-align: center; border-bottom: 1px solid #222; }
+        h1 { font-size: 1.8rem; color: #00ffcc; margin: 0; letter-spacing: 2px; }
+        .container { max-width: 800px; margin: 0 auto; padding: 1.5rem; }
+        .card { background: #121218; border: 1px solid #2a2a35; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
+        button { background: #00ffcc; color: #0a0a0c; border: none; padding: 0.8rem 1.5rem; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; font-size: 1rem; transition: opacity 0.2s; }
+        button:hover { opacity: 0.85; }
+        .stats { display: flex; justify-content: space-between; text-align: center; }
+        .stat-box { flex: 1; padding: 0.5rem; }
+        .stat-value { font-size: 1.4rem; color: #00ffcc; font-weight: bold; }
+        #feed { font-family: monospace; font-size: 0.85rem; max-height: 150px; overflow-y: auto; color: #888; background: #050507; padding: 1rem; border-radius: 6px; }
+        .viral-box { background: linear-gradient(135deg, #121218, #1a1a2e); border: 1px solid #00ffcc; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>MONOSTOCK</h1>
+        <p style="color: #666; font-size: 0.85rem; margin-top: 0.5rem;">Autonomous Asset & API Exchange Fabric</p>
+    </header>
+
+    <div class="container">
+        <!-- ライブ統計 -->
+        <div class="card stats">
+            <div class="stat-box">
+                <div>総流通総額 (TVL)</div>
+                <div class="stat-value" id="tvl">¥1,420,890,500</div>
+            </div>
+            <div class="stat-box">
+                <div>システム自動徴収益</div>
+                <div class="stat-value" id="revenue">¥14,208,905</div>
+            </div>
+        </div>
+
+        <!-- 自動バイラルシェア（勝手に拡散される仕組み） -->
+        <div class="card viral-box">
+            <h3 style="margin-top: 0; color: #00ffcc;">🔥 バイラル・ブースト起動</h3>
+            <p style="font-size: 0.9rem; color: #aaa;">あなたの专属リンクを他者に踏ませることで、全トランザクションから永続的に「自動紹介報酬（リファラル・ディビデンド）」がチャリンと加算されます。</p>
+            <button onclick="generateViralLink()">専用マイニングリンクを発行</button>
+            <p id="viral-link-display" style="word-break: break-all; color: #00ffcc; font-size: 0.85rem; margin-top: 1rem;"></p>
+        </div>
+
+        <!-- リアルタイムトランザクションフィード -->
+        <div class="card">
+            <h3 style="margin-top: 0; font-size: 1rem;">⚡ リアルタイム自律経済ログ</h3>
+            <div id="feed">
+                [SYSTEM] Initializing global micro-routing nodes...<br>
+                [AUTONOMOUS_TX] Asset routed successfully. Fee collected.<br>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function generateViralLink() {
+            const randomId = Math.random().toString(36.substring(2, 10));
+            const link = `https://monostock.io/?ref=${randomId}`;
+            document.getElementById('viral-link-display').innerText = `拡散リンク: ${link} （※このリンク経由の流通益の0.2%が自動であなたのものになります）`;
+            navigator.clipboard.writeText(link);
+            alert('バイラルリンクをコピーしました！SNSや開発者コミュニティにばら撒くほど自動で不労所得が増殖します。');
+        }
+
+        // リアルタイムログのシミュレーション
+        setInterval(() => {
+            const feed = document.getElementById('feed');
+            const txId = 'tx_' + Math.random().toString(36).substring(2, 9);
+            const amount = (Math.random() * 50).toFixed(4);
+            feed.innerHTML = `[SETTLED] ${txId} - Routed ${amount} MONO (Fee auto-deducted)<br>` + feed.innerHTML;
+        }, 3000);
+    </script>
+</body>
+</html>
