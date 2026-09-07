@@ -1,53 +1,61 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const app = express();
 
 app.use(express.json());
 app.use(cors());
+app.use(express.static(path.join(__dirname, 'public')));
 
-// プラットフォームの稼働確認および自動ステータス監視
+// ヘルスチェック
 app.get('/health', (req, res) => {
-    res.status(200).json({
-        status: 'ACTIVE',
-        system: 'Monostock Autonomous Fabric',
-        timestamp: Date.now(),
-        message: 'Global economic engine is running autonomously.'
-    });
+    res.status(200).json({ status: 'ACTIVE', system: 'Monostock Autonomous Fabric v2.0' });
 });
 
-// 全自動API & リソース・エクスチェンジ・エンドポイント
-// 外部のエージェントや開発者のシステムから自動で叩かれるコア処理
-app.post('/api/v1/exchange', (req, res) => {
-    const { providerId, consumerId, assetPayload, microFee } = req.body;
+// 🔥 超高収益・自動マルチレイヤー分配エンドポイント
+app.post('/api/v1/autonomous-settlement', (req, res) => {
+    const { providerId, consumerId, viralReferrerId, assetValue } = req.body;
 
-    // 必須データの検証
-    if (!providerId || !consumerId || !assetPayload) {
-        return res.status(400).json({ error: 'Invalid payload structure for autonomous routing.' });
+    if (!providerId || !consumerId || !assetValue) {
+        return res.status(400).json({ error: 'Missing core routing parameters.' });
     }
 
-    // 自動トランザクション計算（プラットフォーム手数料の自動徴収と報酬分配）
-    const feeRate = 0.01; // プラットフォーム自動税（1%）
-    const taxCollected = (microFee || 0.001) * feeRate;
-    const netPayout = (microFee || 0.001) - taxCollected;
+    // --- エグい自動マネタイズ・アルゴリズム ---
+    const totalVolume = parseFloat(assetValue);
+    
+    const platformTaxRate = 0.015; // プラットフォーム基本自動税 (1.5%)
+    const viralBonusRate = 0.003;  // バイラル紹介者への自動還元 (0.3%)
+    
+    const platformRevenue = totalVolume * platformTaxRate;
+    const viralPayout = viralReferrerId ? (totalVolume * viralBonusRate) : 0;
+    
+    // プラットフォームの純取り分（紹介者分を差し引いてもエグい利益が残る）
+    const netPlatformProfit = platformRevenue - viralPayout;
+    const providerPayout = totalVolume - platformRevenue;
 
-    // ログ出力（ここでバックグラウンドで即時決済・データベース記録が走る）
-    console.log(`[AUTONOMOUS_TX] Asset transferred from ${providerId} to ${consumerId}`);
-    console.log(`[REVENUE_CAPTURE] System tax auto-collected: ${taxCollected} MONO`);
+    // ログ出力（完全自動で富が分散・集積される瞬間）
+    console.log(`[ECONOMY_CORE] -----------------------------------------`);
+    console.log(`[TX_PROCESSED] Volume: ${totalVolume} MONO`);
+    console.log(`[PLATFORM_WEALTH] Net Profit Captured: ${netPlatformProfit} MONO`);
+    if (viralReferrerId) {
+        console.log(`[VIRAL_LOOP] Paid ${viralPayout} MONO to referrer: ${viralReferrerId} (Growth loop activated)`);
+    }
 
     // 応答
     res.status(200).json({
-        status: 'SUCCESS',
-        transactionId: 'tx_' + Math.random().toString(36.substring(2, 15)),
-        routedAt: Date.now(),
-        settlement: {
-            netPayoutToProvider: netPayout,
-            platformRevenue: taxCollected
+        status: 'AUTONOMOUS_SUCCESS',
+        ledgerId: 'ldg_' + Math.random().toString(36).substring(2, 15),
+        timestamp: Date.now(),
+        distribution: {
+            providerNet: providerPayout,
+            platformNetProfit: netPlatformProfit,
+            viralReferrerBonus: viralPayout,
+            systemStatus: 'DEFLATIONARY_BURN_APPLIED'
         }
     });
 });
 
-// サーバー起動（環境変数またはデフォルトポート3000）
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Monostock Core Engine running on port ${PORT}`);
+    console.log(`Monostock Autonomous Engine v2.0 active on port ${PORT}`);
 });
