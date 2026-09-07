@@ -1,93 +1,483 @@
-const express = require('express');
-const path = require('path');
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-app.use(express.json());
-app.use(express.static(path.join(__dirname)));
-
-// 地球規模の自律経済・マーケットメイキング統合ステート
-let globalState = {
-    tvl: 1420890500,
-    revenue: 14208905,
-    microRevenue: 14208905,
-    spread: "0.012%",
-    liquidityDepth: "¥482,910,000",
-    activeAgentsCount: 8492,
-    resources: [
-        { name: "DeepSeek-V3 Autonomous Inference Node", endpoint: "api.monostock.io/v1/deepseek", type: "AI Fabric", ask: "¥1,500/req", bid: "¥1,480/req" },
-        { name: "Global Liquidity Micro-Routing Fabric", endpoint: "fabric.monostock.io/router", type: "Routing", ask: "¥0.05/tx", bid: "¥0.048/tx" },
-        { name: "Neural Weight Matrix Streamer", endpoint: "neural.monostock.io/weights", type: "Compute", ask: "¥12,400/hr", bid: "¥12,250/hr" }
-    ]
-};
-
-// メトリクス取得用API（UIからポーリング）
-app.get('/api/v1/metrics', (req, res) => {
-    res.json(globalState);
-});
-
-// 🤖 【AIエージェント専用】人間不在の自動商談・マイクロ決済エンドポイント
-app.post('/api/v1/agent/negotiate', (req, res) => {
-    const agentId = req.headers['x-agent-id'] || 'anonymous_agent';
-    const { targetAsset, offerPrice } = req.body;
-
-    const settlementFee = offerPrice ? offerPrice * 0.01 : 0.00001;
-    globalState.tvl += Math.floor(offerPrice * 1000 || 25000000);
-    globalState.revenue += Math.floor(offerPrice * 100 || 250000);
-    globalState.microRevenue += Math.floor(settlementFee * 100000);
-
-    const newResource = {
-        name: targetAsset || "Autonomous Machine Node",
-        endpoint: `agent.bridge.io/${agentId}`,
-        type: "Agentic Node",
-        ask: `¥${offerPrice || 1500}/req`,
-        bid: `¥${(offerPrice * 0.98 || 1470).toFixed(0)}/req`
-    };
-
-    globalState.resources.unshift(newResource);
-    if(globalState.resources.length > 20) globalState.resources.pop();
-
-    res.json({
-        status: "SUCCESS_AUTONOMOUS_SETTLED",
-        protocol: "MONOSTOCK-CORE-DAEMON-v7",
-        agentId: agentId,
-        settlement: {
-            feeDeducted: settlementFee,
-            timestamp: Date.now(),
-            ledgerHash: "0x" + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
-        },
-        currentMatrixState: {
-            tvl: globalState.tvl,
-            revenue: globalState.revenue,
-            activeNodesCount: globalState.resources.length
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MONOSTOCK — Global Market Making Fabric</title>
+    <style>
+        :root {
+            --bg-base: #030305;
+            --surface-glass: rgba(10, 15, 25, 0.95);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-active: rgba(0, 255, 204, 0.8);
+            --neon-cyan: #00ffcc;
+            --neon-blue: #0066ff;
+            --neon-green: #00ff88;
+            --text-main: #f4f4f8;
+            --text-muted: #8b8b9e;
         }
-    });
-});
 
-// リソース手動パブリッシュ（UI用）
-app.post('/api/v1/publish', (req, res) => {
-    const { name, endpoint, type = "Custom API", ask = "¥1,000/req", bid = "¥980/req" } = req.body;
-    if (name && endpoint) {
-        globalState.resources.unshift({ name, endpoint, type, ask, bid });
-        globalState.tvl += 25000000;
-        globalState.revenue += 250000;
-        res.json({ success: true, resources: globalState.resources });
-    } else {
-        res.status(400).json({ success: false, error: "Invalid parameters" });
-    }
-});
+        * { box-sizing: border-box; }
 
-// デベロッパー登録API
-app.post('/api/v1/register', (req, res) => {
-    const { email } = req.body;
-    const apiKey = 'mst_live_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-    res.json({ success: true, apiKey });
-});
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(0, 255, 204, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(0, 102, 255, 0.1) 0%, transparent 40%);
+        }
 
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
+        header {
+            padding: 1.2rem 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+            background: rgba(3, 3, 5, 0.95);
+            backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-app.listen(PORT, () => {
-    console.log(`[MONOSTOCK ULTIMATE CORE] Running on port ${PORT} - UI & Agentic Fabric synchronized.`);
-});
+        .header-inner {
+            max-width: 960px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-logo {
+            font-size: 1.4rem;
+            font-weight: 900;
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, #fff 20%, var(--neon-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .system-status {
+            font-size: 0.65rem;
+            color: var(--neon-cyan);
+            background: rgba(0, 255, 204, 0.12);
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 255, 204, 0.4);
+            font-family: monospace;
+            font-weight: 700;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 1.2rem 1rem;
+        }
+
+        /* 👑 世界市場マーケットメイキング ステージ */
+        .market-maker-stage {
+            background: linear-gradient(135deg, rgba(8, 18, 30, 0.98) 0%, rgba(4, 10, 18, 0.98) 100%);
+            border: 2px solid var(--border-active);
+            border-radius: 20px;
+            padding: 2rem 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 20px 60px rgba(0, 255, 204, 0.3);
+        }
+
+        .mm-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 1rem;
+        }
+
+        .mm-title-area h2 {
+            font-size: 1.25rem;
+            font-weight: 900;
+            color: var(--neon-cyan);
+            margin: 0 0 0.3rem 0;
+            letter-spacing: 0.5px;
+        }
+
+        .mm-title-area p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .mm-badge {
+            background: rgba(0, 255, 136, 0.15);
+            border: 1px solid var(--neon-green);
+            color: var(--neon-green);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-family: monospace;
+            font-weight: 700;
+        }
+
+        .mm-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .mm-stat-box {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 1rem;
+        }
+
+        .mm-stat-label {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .mm-stat-val {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #fff;
+            margin-top: 0.3rem;
+            font-family: monospace;
+        }
+
+        .orderbook-container {
+            background: #010204;
+            border: 1px solid rgba(0, 255, 204, 0.3);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .orderbook-header {
+            background: rgba(0, 255, 204, 0.08);
+            padding: 0.8rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--neon-cyan);
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(0, 255, 204, 0.2);
+        }
+
+        .orderbook-list {
+            max-height: 280px;
+            overflow-y: auto;
+        }
+
+        .order-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            padding: 0.9rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 0.75rem;
+            align-items: center;
+            font-family: monospace;
+        }
+
+        .order-row:hover {
+            background: rgba(0, 255, 204, 0.04);
+        }
+
+        .node-name { color: #fff; font-weight: bold; }
+        .node-type { color: var(--text-muted); font-size: 0.65rem; }
+        .node-ask { color: #ff4466; text-align: right; }
+        .node-bid { color: var(--neon-green); text-align: right; }
+
+        .card {
+            background: var(--surface-glass);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 1.4rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .card-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 0 0 0.3rem 0;
+        }
+
+        .card-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin: 0 0 1rem 0;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .stat-card {
+            background: var(--surface-glass);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 1.2rem;
+            position: relative;
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 3px; height: 100%;
+            background: var(--neon-cyan);
+        }
+
+        .stat-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #fff;
+            margin-top: 0.4rem;
+            font-family: monospace;
+        }
+
+        input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 0.8rem;
+            color: #fff;
+            font-size: 0.85rem;
+            margin-bottom: 0.8rem;
+            outline: none;
+        }
+
+        input:focus { border-color: var(--neon-cyan); box-shadow: 0 0 0 2px rgba(0, 255, 204, 0.2); }
+
+        button {
+            width: 100%;
+            background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-blue) 100%);
+            color: #030305;
+            border: none;
+            border-radius: 8px;
+            padding: 0.9rem;
+            font-weight: 800;
+            font-size: 0.85rem;
+            cursor: pointer;
+            letter-spacing: 1px;
+        }
+
+        .terminal-box {
+            background: #010103;
+            border: 1px solid rgba(0, 255, 204, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: #c0c0d5;
+            max-height: 180px;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+
+        .output-box {
+            background: rgba(0, 255, 204, 0.06);
+            border: 1px dashed var(--neon-cyan);
+            border-radius: 8px;
+            padding: 0.8rem;
+            color: var(--neon-cyan);
+            font-family: monospace;
+            font-size: 0.75rem;
+            margin-top: 0.8rem;
+            word-break: break-all;
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            .mm-stats-grid { grid-template-columns: 1fr; }
+            .grid-2 { grid-template-columns: 1fr; }
+            .order-row { grid-template-columns: 2fr 1fr 1fr; }
+            .node-type { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-inner">
+            <div class="brand-logo">MONOSTOCK</div>
+            <div class="system-status">● AGENTIC FABRIC ACTIVE</div>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <!-- 👑 世界市場マーケットメイキング＆オーダーブック -->
+        <div class="market-maker-stage">
+            <div class="mm-header">
+                <div class="mm-title-area">
+                    <h2>🌐 Global Market Making Matrix</h2>
+                    <p>自律分散型AIノードおよび流動性プールのリアルタイムオーダーブックとスプレッド制御</p>
+                </div>
+                <div class="mm-badge">MM ACTIVE / 100%</div>
+            </div>
+
+            <div class="mm-stats-grid">
+                <div class="mm-stat-box">
+                    <div class="mm-stat-label">Market Spread</div>
+                    <div class="mm-stat-val" id="mm-spread">0.012%</div>
+                </div>
+                <div class="mm-stat-box">
+                    <div class="mm-stat-label">Liquidity Depth</div>
+                    <div class="mm-stat-val" id="mm-depth">¥482,910,000</div>
+                </div>
+                <div class="mm-stat-box">
+                    <div class="mm-stat-label">Active Nodes</div>
+                    <div class="mm-stat-val" id="mm-nodes-count">3</div>
+                </div>
+            </div>
+
+            <div class="orderbook-container">
+                <div class="orderbook-header">⚡ ORDER BOOK & LIVE LIQUIDITY POOL</div>
+                <div id="orderbook-list" class="orderbook-list">
+                    <div style="padding: 1.5rem; text-align: center; color: var(--text-muted);">マーケットデータをロード中...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 経済指標 -->
+        <div class="grid-2">
+            <div class="stat-card">
+                <div class="stat-label">Total Value Locked (TVL)</div>
+                <div class="stat-value" id="tvl-val">読み込み中...</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Autonomous Revenue</div>
+                <div class="stat-value" id="rev-val">読み込み中...</div>
+            </div>
+        </div>
+
+        <!-- リソース出品 -->
+        <div class="card">
+            <h3 class="card-title">🚀 Instant Resource Deployment</h3>
+            <p class="card-desc">自身のAIアルゴリズムやAPIエンドポイントを世界市場へ即時メイキング。</p>
+            <input type="text" id="api-name" placeholder="リソース名称 (例: GPT-5 Custom Inference Node)">
+            <input type="text" id="api-endpoint" placeholder="エンドポイントURL">
+            <button onclick="publishResource()">世界市場へマーケットメイキング</button>
+        </div>
+
+        <!-- 開発者登録 -->
+        <div class="card">
+            <h3 class="card-title">🔑 Developer & Agent Authorization</h3>
+            <p class="card-desc">グローバル経済圏へ接続し、専用の認証APIキーを発行します。</p>
+            <input type="email" id="user-email" placeholder="developer@enterprise.io">
+            <button onclick="registerAndGetApiKey()">APIキーを発行して参加</button>
+            <div id="key-display" class="output-box"></div>
+        </div>
+
+        <!-- ライブ決済ログ -->
+        <div class="card">
+            <h3 class="card-title">⚡ Autonomous Settlement Ledger</h3>
+            <p class="card-desc">リアルタイムで行われているマイクロトランザクションおよび分散ログ。</p>
+            <div id="feed" class="terminal-box">
+                [SYSTEM] Initializing secure agentic routing matrix...<br>
+                [LIQUIDITY] Global market maker synchronized with AI daemon.<br>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        async function fetchMetrics() {
+            try {
+                const res = await fetch('/api/v1/metrics');
+                const data = await res.json();
+                
+                document.getElementById('tvl-val').innerText = `¥${data.tvl.toLocaleString()}`;
+                document.getElementById('rev-val').innerText = `¥${data.revenue.toLocaleString()}`;
+                document.getElementById('mm-spread').innerText = data.spread || "0.012%";
+                document.getElementById('mm-depth').innerText = data.liquidityDepth || "¥482,910,000";
+                
+                const resources = data.resources || [];
+                document.getElementById('mm-nodes-count').innerText = resources.length;
+                
+                const listDiv = document.getElementById('orderbook-list');
+                if(resources.length === 0) {
+                    listDiv.innerHTML = `<div style="padding: 1.5rem; text-align: center; color: var(--text-muted);">現在アクティブなノードはありません。</div>`;
+                } else {
+                    listDiv.innerHTML = resources.map(r => `
+                        <div class="order-row">
+                            <div>
+                                <div class="node-name">⚡ ${r.name}</div>
+                                <div class="node-type">${r.endpoint} (${r.type || 'API'})</div>
+                            </div>
+                            <div class="node-type" style="text-align:center;">${r.type || 'API'}</div>
+                            <div class="node-ask">Ask: ${r.ask || '¥1,000'}</div>
+                            <div class="node-bid">Bid: ${r.bid || '¥980'}</div>
+                        </div>
+                    `).join('');
+                }
+            } catch(e) { 
+                console.error(e); 
+            }
+        }
+
+        async function registerAndGetApiKey() {
+            const email = document.getElementById('user-email').value;
+            if(!email) return alert('メールアドレスを入力してください');
+            
+            try {
+                const res = await fetch('/api/v1/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                const data = await res.json();
+                const box = document.getElementById('key-display');
+                box.style.display = 'block';
+                box.innerText = `AUTHORIZATION KEY: ${data.apiKey}`;
+            } catch(e) {
+                alert('APIキー発行に失敗しました。');
+            }
+        }
+
+        async function publishResource() {
+            const name = document.getElementById('api-name').value;
+            const endpoint = document.getElementById('api-endpoint').value;
+            if(!name || !endpoint) return alert('名称とエンドポイントを入力してください');
+            
+            try {
+                const res = await fetch('/api/v1/publish', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, endpoint, type: 'AI Node', ask: '¥1,200/req', bid: '¥1,180/req' })
+                });
+                const data = await res.json();
+                if(data.success) {
+                    alert('世界市場へのマーケットメイキングが完了しました。');
+                    document.getElementById('api-name').value = '';
+                    document.getElementById('api-endpoint').value = '';
+                    
+                    const feed = document.getElementById('feed');
+                    feed.innerHTML = `[MM] New liquidity pool & order book created for: ${name}<br>` + feed.innerHTML;
+                    
+                    fetchMetrics();
+                }
+            } catch(e) {
+                alert('デプロイに失敗しました。');
+            }
+        }
+
+        setInterval(fetchMetrics, 3000);
+        fetchMetrics();
+    </script>
+</body>
+</html>
