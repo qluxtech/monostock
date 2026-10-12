@@ -3,13 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>M&A-SWARM SUPREME | 世界最高峰 自律型M&Aグローバルプラットフォーム</title>
+  <title>M&A-SWARM SUPREME v12.0 | Global Omnibus Terminal</title>
   <style>
     :root {
-      --bg-core: #010308;
-      --panel-bg: rgba(8, 13, 24, 0.88);
-      --panel-border: rgba(255, 255, 255, 0.09);
-      --panel-glow: rgba(56, 189, 248, 0.2);
+      --bg-core: #010206;
+      --panel-bg: rgba(6, 10, 20, 0.94);
+      --panel-border: rgba(255, 255, 255, 0.1);
       --text-main: #f8fafc;
       --text-sub: #94a3b8;
       --accent-cyan: #38bdf8;
@@ -23,292 +22,222 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-font-smoothing: antialiased; }
 
     html, body {
-      background-color: var(--bg-core);
-      color: var(--text-main);
-      height: 100vh;
-      width: 100vw;
-      overflow: hidden;
+      background-color: var(--bg-core); color: var(--text-main);
+      height: 100vh; width: 100vw; overflow: hidden;
     }
 
-    body {
-      display: flex;
-      flex-direction: column;
-      padding: 10px;
-      gap: 8px;
-    }
+    body { display: flex; flex-direction: column; padding: 6px; gap: 6px; }
 
-    /* 1/fゆらぎオーロラ背景 */
-    #supremeCanvas {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      z-index: 0; pointer-events: none;
-    }
+    #globalCanvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; }
 
     .app-viewport {
-      position: relative; z-index: 1;
-      width: 100%; height: 100%;
-      display: flex; flex-direction: column; gap: 8px;
-      max-width: 1800px; margin: 0 auto;
+      position: relative; z-index: 1; width: 100%; height: 100%;
+      display: flex; flex-direction: column; gap: 6px; max-width: 1920px; margin: 0 auto;
     }
 
-    /* プレミアム・ヘッダー */
     header {
       background: var(--panel-bg); backdrop-filter: blur(24px);
-      border: 1px solid var(--panel-border); border-radius: 12px;
-      padding: 10px 18px; display: flex; justify-content: space-between; align-items: center;
-      flex-shrink: 0; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--panel-border); border-radius: 8px;
+      padding: 8px 14px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;
     }
 
-    .brand-box { display: flex; align-items: center; gap: 10px; }
-    .brand-title { font-weight: 900; font-size: 1rem; letter-spacing: 0.1em; background: linear-gradient(135deg, #fff, var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .brand-title { font-weight: 900; font-size: 0.9rem; background: linear-gradient(135deg, #fff, var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     
-    .live-indicator { display: flex; gap: 8px; align-items: center; }
-    .badge-pill {
-      font-size: 0.62rem; font-weight: 700; padding: 4px 10px; border-radius: 20px;
-      display: flex; align-items: center; gap: 5px; border: 1px solid var(--panel-border);
-      background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px);
+    .global-controls { display: flex; gap: 6px; align-items: center; }
+    .select-lang, .select-curr {
+      background: #020408; border: 1px solid var(--panel-border); color: var(--accent-cyan);
+      font-size: 0.6rem; padding: 3px 6px; border-radius: 4px; outline: none; font-weight: 700; cursor: pointer;
     }
-    .badge-pill.green { color: var(--accent-emerald); border-color: rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.08); }
-    .badge-pill.cyan { color: var(--accent-cyan); border-color: rgba(56, 189, 248, 0.3); background: rgba(56, 189, 248, 0.08); }
-    .glow-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-emerald); box-shadow: 0 0 10px var(--accent-emerald); animate: pulse 2s infinite; }
 
-    /* オーナー収益オートパイロットメーター */
+    /* オーナー自動収益トップティッカー（グローバル対応） */
     .owner-ticker {
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(56, 189, 248, 0.06));
-      border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px;
-      padding: 10px 16px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
-      flex-shrink: 0; backdrop-filter: blur(16px);
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(56, 189, 248, 0.08));
+      border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 8px;
+      padding: 8px 12px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; flex-shrink: 0;
     }
-    .ot-item { display: flex; flex-direction: column; gap: 2px; }
-    .ot-lbl { font-size: 0.6rem; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.05em; }
-    .ot-val { font-size: 1.15rem; font-weight: 900; font-family: var(--font-mono); }
+    .ot-item { display: flex; flex-direction: column; gap: 1px; }
+    .ot-lbl { font-size: 0.55srem; color: var(--text-sub); text-transform: uppercase; }
+    .ot-val { font-size: 1.05rem; font-weight: 900; font-family: var(--font-mono); }
 
-    /* メイン・フルハイトグリッド */
-    .supreme-grid {
-      display: grid; grid-template-columns: 1.4fr 1fr; gap: 8px;
-      flex-grow: 1; min-height: 0;
+    /* メイングリッド */
+    .global-grid {
+      display: grid; grid-template-columns: 1.4fr 1fr; gap: 6px; flex-grow: 1; min-height: 0;
     }
-    @media (max-width: 960px) { .supreme-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 960px) { .global-grid { grid-template-columns: 1fr; } }
 
     .panel {
       background: var(--panel-bg); backdrop-filter: blur(20px);
-      border: 1px solid var(--panel-border); border-radius: 12px;
-      padding: 12px; display: flex; flex-direction: column; gap: 10px;
-      min-height: 0; flex-grow: 1; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--panel-border); border-radius: 8px;
+      padding: 8px; display: flex; flex-direction: column; gap: 6px; min-height: 0; flex-grow: 1;
     }
 
     .panel-heading {
-      font-size: 0.75rem; font-weight: 800; color: var(--text-sub);
+      font-size: 0.68rem; font-weight: 800; color: var(--text-sub);
       display: flex; justify-content: space-between; align-items: center;
-      border-bottom: 1px solid var(--panel-border); padding-bottom: 6px;
-      flex-shrink: 0; text-transform: uppercase; letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--panel-border); padding-bottom: 4px; flex-shrink: 0;
     }
 
-    /* 買い手 vs 売り手 スーパースイッチタブ */
-    .super-switcher {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex-shrink: 0;
-    }
+    .super-switcher { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; flex-shrink: 0; }
     .ss-btn {
-      background: rgba(255, 255, 255, 0.02); border: 1px solid var(--panel-border); border-radius: 8px;
-      padding: 10px; text-align: center; cursor: pointer; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      background: rgba(255, 255, 255, 0.02); border: 1px solid var(--panel-border); border-radius: 6px;
+      padding: 8px; text-align: center; cursor: pointer; transition: 0.2s;
     }
-    .ss-btn.active.buy { background: rgba(56, 189, 248, 0.12); border-color: var(--accent-cyan); box-shadow: 0 0 20px rgba(56, 189, 248, 0.2); }
-    .ss-btn.active.sell { background: rgba(249, 115, 22, 0.12); border-color: var(--accent-orange); box-shadow: 0 0 20px rgba(249, 115, 22, 0.2); }
-    .ss-title { font-size: 0.82rem; font-weight: 900; }
-    .ss-sub { font-size: 0.6rem; color: var(--text-sub); margin-top: 2px; }
+    .ss-btn.active.buy { background: rgba(56, 189, 248, 0.12); border-color: var(--accent-cyan); }
+    .ss-btn.active.sell { background: rgba(249, 115, 22, 0.12); border-color: var(--accent-orange); }
+    .ss-title { font-size: 0.75rem; font-weight: 900; }
+    .ss-sub { font-size: 0.55rem; color: var(--text-sub); margin-top: 1px; }
 
-    /* 案件ストリーム（スクロール領域） */
-    .market-scroll {
-      display: flex; flex-direction: column; gap: 8px;
-      overflow-y: auto; flex-grow: 1; padding-right: 2px;
-    }
-    .market-scroll::-webkit-scrollbar { width: 4px; }
-    .market-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
-
+    .market-scroll { display: flex; flex-direction: column; gap: 6px; overflow-y: auto; flex-grow: 1; padding-right: 2px; }
     .asset-tile {
-      background: rgba(255, 255, 255, 0.018); border: 1px solid var(--panel-border);
-      border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;
-      transition: all 0.2s ease; flex-shrink: 0; position: relative; overflow: hidden;
+      background: rgba(255, 255, 255, 0.015); border: 1px solid var(--panel-border);
+      border-radius: 6px; padding: 8px 10px; display: flex; flex-direction: column; gap: 4px; flex-shrink: 0;
     }
-    .asset-tile:hover { border-color: var(--accent-cyan); background: rgba(56, 189, 248, 0.03); transform: translateY(-1px); }
-    .at-top { display: flex; justify-content: space-between; align-items: center; font-size: 0.65rem; }
-    .at-tag { background: rgba(56, 189, 248, 0.15); color: var(--accent-cyan); padding: 2px 8px; border-radius: 4px; font-weight: 700; }
-    .at-name { font-size: 0.85rem; font-weight: 800; color: #fff; }
-    .at-desc { font-size: 0.65rem; color: var(--text-sub); line-height: 1.35; }
+    .asset-tile:hover { border-color: var(--accent-cyan); }
+    .at-top { display: flex; justify-content: space-between; align-items: center; font-size: 0.6rem; }
+    .at-tag { background: rgba(56, 189, 248, 0.15); color: var(--accent-cyan); padding: 1px 6px; border-radius: 3px; font-weight: 700; }
+    .at-name { font-size: 0.78rem; font-weight: 800; color: #fff; }
+    .at-desc { font-size: 0.58rem; color: var(--text-sub); line-height: 1.3; }
     .at-bottom { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 2px; }
-    .at-price { font-size: 1.1rem; font-weight: 900; color: var(--accent-gold); font-family: var(--font-mono); }
+    .at-price { font-size: 0.95rem; font-weight: 900; color: var(--accent-gold); font-family: var(--font-mono); }
 
     .btn-action-glow {
-      background: linear-gradient(135deg, var(--accent-cyan), #0284c7); color: #000; border: none; padding: 6px 12px;
-      border-radius: 6px; font-weight: 900; font-size: 0.68rem; cursor: pointer; transition: 0.2s;
-      box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
+      background: var(--accent-cyan); color: #000; border: none; padding: 5px 10px;
+      border-radius: 4px; font-weight: 900; font-size: 0.62rem; cursor: pointer;
     }
-    .btn-action-glow:hover { transform: scale(1.02); filter: brightness(1.1); }
 
-    /* 売り手ビュー：AI自動査定ウィザード */
     .ai-wizard-box {
-      display: flex; flex-direction: column; gap: 10px; flex-grow: 1; justify-content: center;
+      display: flex; flex-direction: column; gap: 8px; flex-grow: 1; justify-content: center;
       background: linear-gradient(135deg, rgba(249, 115, 22, 0.04), rgba(0,0,0,0));
-      border: 1px dashed rgba(249, 115, 22, 0.4); border-radius: 8px; padding: 16px;
+      border: 1px dashed rgba(249, 115, 22, 0.4); border-radius: 6px; padding: 12px;
     }
-    .input-field-group { display: flex; flex-direction: column; gap: 4px; }
-    .input-lbl { font-size: 0.68rem; color: var(--text-sub); font-weight: 700; }
+    .input-field-group { display: flex; flex-direction: column; gap: 3px; }
+    .input-lbl { font-size: 0.62rem; color: var(--text-sub); font-weight: 700; }
     .supreme-input {
-      background: #020408; border: 1px solid var(--panel-border); border-radius: 6px;
-      padding: 10px; color: #fff; font-size: 0.8rem; outline: none; transition: 0.2s;
+      background: #020408; border: 1px solid var(--panel-border); border-radius: 4px;
+      padding: 8px; color: #fff; font-size: 0.75rem; outline: none;
     }
-    .supreme-input:focus { border-color: var(--accent-orange); box-shadow: 0 0 10px rgba(249, 115, 22, 0.2); }
     .btn-wizard-submit {
       background: linear-gradient(135deg, var(--accent-orange), #c2410c); color: #fff;
-      border: none; padding: 12px; border-radius: 8px; font-weight: 900; font-size: 0.82rem;
-      cursor: pointer; box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4); margin-top: 4px;
+      border: none; padding: 10px; border-radius: 6px; font-weight: 900; font-size: 0.75rem; cursor: pointer;
     }
 
-    /* 右カラム：高度可視化チャート＆自律ターミナル */
-    .right-viz-stack { display: flex; flex-direction: column; gap: 8px; flex-grow: 1; min-height: 0; }
-    
-    .chart-canvas-box {
-      width: 100%; height: 130px; background: #010306; border-radius: 8px;
-      border: 1px solid var(--panel-border); flex-shrink: 0; position: relative; overflow: hidden;
-    }
-
+    .right-viz-stack { display: flex; flex-direction: column; gap: 6px; flex-grow: 1; min-height: 0; }
+    .chart-canvas-box { width: 100%; height: 110px; background: #010306; border-radius: 6px; border: 1px solid var(--panel-border); flex-shrink: 0; }
     .terminal-output {
-      background: #010306; border: 1px solid var(--panel-border); border-radius: 8px;
-      padding: 8px; font-family: var(--font-mono); font-size: 0.65rem; color: var(--accent-cyan);
-      flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 4px; min-height: 0;
+      background: #010306; border: 1px solid var(--panel-border); border-radius: 6px;
+      padding: 6px; font-family: var(--font-mono); font-size: 0.6rem; color: var(--accent-cyan);
+      flex-grow: 1; overflow: hidden; display: flex; flex-direction: column; gap: 3px; min-height: 0;
     }
 
-    /* フッター：収益一括出金＆法的リンク */
     footer {
       background: var(--panel-bg); backdrop-filter: blur(20px);
-      border: 1px solid var(--panel-border); border-radius: 10px;
-      padding: 8px 16px; display: flex; justify-content: space-between; align-items: center;
-      font-size: 0.65rem; color: var(--text-sub); flex-shrink: 0;
+      border: 1px solid var(--panel-border); border-radius: 8px;
+      padding: 6px 12px; display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.6rem; color: var(--text-sub); flex-shrink: 0;
     }
     .harvest-glow-btn {
       background: linear-gradient(135deg, var(--accent-emerald), #059669); color: #fff;
-      border: none; padding: 6px 14px; border-radius: 6px; font-weight: 900; font-size: 0.72rem;
-      cursor: pointer; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); transition: 0.2s;
-    }
-    .harvest-glow-btn:hover { transform: scale(1.02); filter: brightness(1.1); }
-    .footer-nav { display: flex; gap: 12px; }
-    .fn-link { color: var(--text-sub); text-decoration: none; cursor: pointer; transition: color 0.2s; }
-    .fn-link:hover { color: var(--accent-cyan); }
-
-    /* セキュア・エスクローモーダル */
-    .supreme-modal-overlay {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      background: rgba(1, 3, 8, 0.9); backdrop-filter: blur(12px); z-index: 1000;
-      display: none; justify-content: center; align-items: center; padding: 16px;
-    }
-    .supreme-modal-card {
-      background: #060b16; border: 1px solid var(--accent-cyan); border-radius: 12px;
-      max-width: 480px; width: 100%; padding: 20px; display: flex; flex-direction: column; gap: 12px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(56, 189, 248, 0.2);
+      border: none; padding: 5px 12px; border-radius: 4px; font-weight: 900; font-size: 0.68rem; cursor: pointer;
     }
   </style>
 </head>
 <body>
 
-  <canvas id="supremeCanvas"></canvas>
+  <canvas id="globalCanvas"></canvas>
 
   <div class="app-viewport">
     
-    <!-- ヘッダー -->
     <header>
-      <div class="brand-box">
-        <div class="brand-title">M&A-SWARM SUPREME v10.0</div>
-      </div>
-      <div class="live-indicator">
-        <div class="badge-pill green"><div class="glow-dot"></div>47 NODES LIVE</div>
-        <div class="badge-pill cyan">STRIPE SECURE CONNECT</div>
+      <div class="brand-title">M&A-SWARM OMNIBUS v12.0 GLOBAL</div>
+      <div class="global-controls">
+        <select class="select-curr" id="currSelect" onchange="changeCurrency()">
+          <option value="JPY">JPY (¥)</option>
+          <option value="USD">USD ($)</option>
+          <option value="EUR">EUR (€)</option>
+          <option value="USDC">USDC (Crypto)</option>
+        </select>
+        <select class="select-lang">
+          <option>ENGLISH</option>
+          <option selected>日本語</option>
+          <option>中文</option>
+          <option>DEUTSCH</option>
+        </select>
       </div>
     </header>
 
-    <!-- オーナー自動収益オートパイロットメーター -->
     <div class="owner-ticker">
       <div class="ot-item">
-        <div class="ot-lbl">本日の自動収益 (Stripe/Escrow)</div>
-        <div class="ot-val" id="todayRev" style="color:var(--accent-emerald)">¥ 842,900</div>
+        <div class="ot-lbl">GLOBAL REVENUE (24H)</div>
+        <div class="ot-val" id="todayRev" style="color:var(--accent-emerald)">¥ 1,240,500</div>
       </div>
       <div class="ot-item">
-        <div class="ot-lbl">当月累計チャリンチャリン</div>
-        <div class="ot-val" id="monthRev" style="color:var(--accent-cyan)">¥ 21,540,000</div>
+        <div class="ot-lbl">MONTHLY AUTOPILOT POOL</div>
+        <div class="ot-val" id="monthRev" style="color:var(--accent-cyan)">¥ 28,450,000</div>
       </div>
       <div class="ot-item">
-        <div class="ot-lbl">自律マッチング勝率</div>
-        <div class="ot-val" style="color:var(--accent-gold)">99.1%</div>
+        <div class="ot-lbl">CROSS-BORDER MATCH</div>
+        <div class="ot-val" style="color:var(--accent-gold)">99.8%</div>
       </div>
       <div class="ot-item">
-        <div class="ot-lbl">グローバル投資ファンド</div>
-        <div class="ot-val" style="color:var(--accent-purple)">1,840 社</div>
+        <div class="ot-lbl">GLOBAL FUNDS</div>
+        <div class="ot-val" style="color:var(--accent-purple)">3,420 社</div>
       </div>
     </div>
 
-    <!-- メイングリッド（隙間ゼロ・完全高密度） -->
-    <div class="supreme-grid">
+    <div class="global-grid">
       
-      <!-- 左カラム：UX切替（買い手 vs 売り手） -->
       <div class="panel">
         <div class="super-switcher">
           <div class="ss-btn active buy" id="modeBuy" onclick="switchMode('buy')">
-            <div class="ss-title" style="color:var(--accent-cyan)">🛒 事業を買う (買い手)</div>
-            <div class="ss-sub">1タップNDA ＆ 即時エスクロー買収</div>
+            <div class="ss-title" style="color:var(--accent-cyan)">🛒 CROSS-BORDER ACQUISITION</div>
+            <div class="ss-sub">ZKP Verified & Instant Escrow</div>
           </div>
           <div class="ss-btn sell" id="modeSell" onclick="switchMode('sell')">
-            <div class="ss-title" style="color:var(--accent-orange)">🚀 自社を売る (売り手)</div>
-            <div class="ss-sub">10秒AI査定 ＆ 完全匿名ノーリスク出品</div>
+            <div class="ss-title" style="color:var(--accent-orange)">🚀 GLOBAL ASSET LISTING</div>
+            <div class="ss-sub">10s AI Valuation & Non-Name</div>
           </div>
         </div>
 
-        <!-- 買い手マーケットプレイス領域 -->
-        <div id="buyContainer" style="display:flex; flex-direction:column; gap:8px; flex-grow:1; min-height:0;">
+        <div id="buyContainer" style="display:flex; flex-direction:column; gap:6px; flex-grow:1; min-height:0;">
           <div class="panel-heading">
-            <span>AI精査済みプレミアム・マーケットプレイス</span>
-            <span style="color:var(--accent-cyan); font-size:0.62rem;">ZKP SECURED</span>
+            <span>GLOBAL VERIFIED ASSET STREAM</span>
+            <span style="color:var(--accent-cyan); font-size:0.58rem;">NYC • LON • SIN • TYO</span>
           </div>
-
-          <div class="market-scroll" id="assetStream">
-            <!-- 動的生成 -->
-          </div>
+          <div class="market-scroll" id="assetStream"></div>
         </div>
 
-        <!-- 売り手AI査定ウィザード領域（初期非表示） -->
-        <div id="sellContainer" style="display:none; flex-direction:column; gap:8px; flex-grow:1;">
+        <div id="sellContainer" style="display:none; flex-direction:column; gap:6px; flex-grow:1;">
           <div class="panel-heading">
-            <span>10秒AI自動査定 ＆ ノンネーム即時出品</span>
-            <span style="color:var(--accent-orange); font-size:0.62rem;">100% NON-NAME</span>
+            <span>GLOBAL AI VALUATION WIZARD</span>
+            <span style="color:var(--accent-orange); font-size:0.58rem;">CROSS-BORDER SYNC</span>
           </div>
-
           <div class="ai-wizard-box">
             <div class="input-field-group">
-              <div class="input-lbl">事業・会社名（完全非公開で登録）</div>
-              <input type="text" id="bizTitle" class="supreme-input" placeholder="例：AI駆動型SaaSプラットフォーム事業">
+              <div class="input-lbl">Enterprise / Asset Name</div>
+              <input type="text" id="bizTitle" class="supreme-input" placeholder="e.g. AI Autonomous SaaS Platform">
             </div>
             <div class="input-field-group">
-              <div class="input-lbl">直近の年間売上高</div>
-              <input type="text" id="bizSalesVal" class="supreme-input" placeholder="例：12,000 万円">
+              <div class="input-lbl">Annual Revenue (Local Currency)</div>
+              <input type="number" id="bizSalesVal" class="supreme-input" placeholder="180000000">
             </div>
             <div class="input-field-group">
-              <div class="input-lbl">年間営業利益</div>
-              <input type="text" id="bizProfitVal" class="supreme-input" placeholder="例：4,500 万円">
+              <div class="input-lbl">Net Annual Profit (Local Currency)</div>
+              <input type="number" id="bizProfitVal" class="supreme-input" placeholder="65000000">
             </div>
-            <button class="btn-wizard-submit" onclick="executeValuation()">AI無料査定 ＆ マーケットへ即時出品</button>
+            <button class="btn-wizard-submit" onclick="executeGlobalValuation()">Execute AI Valuation & Global Listing</button>
           </div>
         </div>
       </div>
 
-      <!-- 右カラム：リアルタイム可視化チャート ＆ 自律エージェントログ -->
       <div class="panel">
         <div class="panel-heading">
-          <span>全国M&Aアセット流動性インデックス</span>
-          <span style="color:var(--accent-emerald); font-size:0.62rem;">LIVE TELEMETRY</span>
+          <span>GLOBAL LIQUIDITY TELEMETRY</span>
+          <span style="color:var(--accent-emerald); font-size:0.58rem;">OMNIBUS MESH ACTIVE</span>
         </div>
-
         <div class="right-viz-stack">
           <canvas id="liveChart" class="chart-canvas-box"></canvas>
-
           <div class="panel-heading" style="margin-top:2px;">
-            <span>SWARM AGENT AUTOPILOT LOG</span>
+            <span>GLOBAL SWARM AGENT AUTOPILOT LOG</span>
           </div>
           <div class="terminal-output" id="terminalFeed"></div>
         </div>
@@ -316,60 +245,41 @@
 
     </div>
 
-    <!-- フッター -->
     <footer>
-      <button class="harvest-glow-btn" onclick="alert('Stripe Connect経由で現在の自動収益全額（¥21,540,000）を登録口座へ即時出金完了しました！')">一括自動出金（ハーベスト）実行</button>
-      <div class="footer-nav">
-        <span class="fn-link" onclick="alert('特定商取引法に基づく表記：M&A-SWARM SUPREME 株式会社 / 所在地：東京都港区六本木 / 決済代行：Stripe Connect')">特定商取引法に基づく表記</span>
+      <button class="harvest-glow-btn" onclick="triggerGlobalHarvest()">Execute Global Stripe Payout (Instant)</button>
+      <div style="display:flex; gap:10px;">
+        <span style="cursor:pointer;" onclick="alert('Global Legal Disclosures & Cross-Border Compliance')">Legal</span>
         <span>|</span>
-        <span class="fn-link" onclick="alert('利用規約：本サービスはAI自律型M&Aプラットフォームです。')">利用規約</span>
-        <span>|</span>
-        <span class="fn-link" onclick="alert('プライバシーポリシー：すべての財務データはZKP暗号化技術によって保護されます。')">プライバシーポリシー</span>
+        <span style="cursor:pointer;" onclick="alert('Terms of Global Omnibus Service')">Terms</span>
       </div>
     </footer>
 
   </div>
 
-  <!-- セキュアNDA＆エスクロー手続きモーダル -->
-  <div class="supreme-modal-overlay" id="secureModalOverlay">
-    <div class="supreme-modal-card">
-      <div style="font-weight:900; font-size:0.95rem; color:var(--accent-cyan);" id="modalHeadTitle">安全買収プロセス</div>
-      <div style="font-size:0.7rem; color:var(--text-sub);" id="modalHeadPrice">希望買収価格：--</div>
-      <div style="background:#020408; padding:12px; border-radius:8px; font-size:0.68rem; color:var(--text-sub); border:1px solid var(--panel-border); line-height:1.5;">
-        🔒 法的効力を持つデジタルNDA（秘密保持誓約）へ自動署名<br>
-        📊 売主企業の詳細財務データ・顧客基盤データを即時アンロック<br>
-        💳 Stripeエスクローによる安全な資金保全スキームの適用
-      </div>
-      <button class="btn-action-glow" style="padding:12px; font-size:0.78rem; text-align:center;" onclick="confirmSecureDeal()">デジタルNDA署名 ＆ エスクロー購入申請を確定</button>
-    </div>
-  </div>
-
   <script>
-    /* 1. 背景1/fゆらぎオーロラ描画 */
-    const canvas = document.getElementById('supremeCanvas');
+    /* グローバル背景メッシュ描画 */
+    const canvas = document.getElementById('globalCanvas');
     const ctx = canvas.getContext('2d');
     function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
     window.addEventListener('resize', resizeCanvas); resizeCanvas();
-    let ang = 0;
-    function renderAurora() {
-      ang += 0.003;
+    let step = 0;
+    function renderGlobalMesh() {
+      step += 0.003;
       ctx.clearRect(0,0,canvas.width,canvas.height);
-      const grad = ctx.createRadialGradient(canvas.width*0.5 + Math.sin(ang)*100, canvas.height*0.3, 20, canvas.width*0.5, canvas.height*0.5, canvas.width*0.9);
-      grad.addColorStop(0, 'rgba(56, 189, 248, 0.1)');
-      grad.addColorStop(0.5, 'rgba(168, 85, 247, 0.04)');
-      grad.addColorStop(1, 'rgba(1, 3, 8, 0)');
+      const grad = ctx.createRadialGradient(canvas.width*0.5 + Math.sin(step)*140, canvas.height*0.3, 10, canvas.width*0.5, canvas.height*0.5, canvas.width*0.85);
+      grad.addColorStop(0, 'rgba(56, 189, 248, 0.14)');
+      grad.addColorStop(0.5, 'rgba(16, 185, 129, 0.04)');
+      grad.addColorStop(1, 'rgba(1, 2, 6, 0)');
       ctx.fillStyle = grad; ctx.fillRect(0,0,canvas.width,canvas.height);
-      requestAnimationFrame(renderAurora);
+      requestAnimationFrame(renderGlobalMesh);
     }
-    renderAurora();
+    renderGlobalMesh();
 
-    /* 2. UXモード切替（買い手 vs 売り手） */
     function switchMode(target) {
       const bCont = document.getElementById('buyContainer');
       const sCont = document.getElementById('sellContainer');
       const bBtn = document.getElementById('modeBuy');
       const sBtn = document.getElementById('modeSell');
-
       if(target === 'buy') {
         bCont.style.display = 'flex'; sCont.style.display = 'none';
         bBtn.classList.add('active'); sBtn.classList.remove('active');
@@ -379,58 +289,88 @@
       }
     }
 
-    /* 3. 圧倒的ボリュームのプレミアム案件ストリーム */
-    const supremeAssets = [
-      { area: "東京都", tag: "IT/SaaS", name: "AI駆動型チャットボットプラットフォーム (ARR 9,800万)", price: "2.4億円", desc: "大手企業300社導入済み。解約率0.8%以下の極上ストック収益アセット。" },
-      { area: "大阪府", tag: "医療美容", name: "心斎橋駅前 メディカル美容皮膚科クリニック", price: "2.9億円", desc: "常勤医師不在でも完全自走する自動予約・カルテ連動システム完備。" },
-      { area: "愛知県", tag: "建設ゼネコン", name: "大手ハウスメーカー一次請け 電気設備工事会社", price: "4.2億円", desc: "年商1.8億。有資格者多数在籍。20年以上の安定取引基盤。" },
-      { area: "福岡県", tag: "不動産ホテル", name: "博多駅前 リノベーションデザイナーズホテル", price: "3.5億円", desc: "無人チェックインシステム導入。年間平均稼働率94%を維持。" },
-      { area: "東京都", tag: "EC/D2C", name: "オーガニックコスメ D2Cブランド", price: "1.8億円", desc: "リピート率72%。インフルエンサーマーケティング網構築済み。" }
+    let currentCurr = 'JPY';
+    const rates = { JPY: 1, USD: 0.0065, EUR: 0.0060, USDC: 0.0065 };
+    const symbols = { JPY: '¥ ', USD: '$ ', EUR: '€ ', USDC: 'USDC ' };
+
+    function formatPrice(jpyVal) {
+      const val = jpyVal * rates[currentCurr];
+      if (currentCurr === 'JPY') return symbols[currentCurr] + (val / 100000000).toFixed(1) + ' 億円';
+      return symbols[currentCurr] + val.toLocaleString(undefined, {maximumFractionDigits: 0});
+    }
+
+    const globalAssets = [
+      { area: "NEW YORK • USA", tag: "AI/SaaS", name: "Autonomous LLM Workflow Engine (ARR $1.2M)", rawPrice: 320000000, desc: "Global enterprise client base across 40 countries. Fully autonomous M2M architecture." },
+      { area: "TOKYO • JAPAN", tag: "MED-TECH", name: "心斎橋駅前 メディカル美容皮膚科クリニック", rawPrice: 320000000, desc: "Automated booking & EHR integration. Zero-doctor dependency operational model." },
+      { area: "LONDON • UK", tag: "FINTECH", name: "Cross-Border Crypto Payment Gateway", rawPrice: 540000000, desc: "Multi-jurisdiction compliant settlement pipeline with instant fiat conversion." }
     ];
 
-    const streamEl = document.getElementById('assetStream');
-    streamEl.innerHTML = supremeAssets.map(a => `
-      <div class="asset-tile">
-        <div class="at-top">
-          <span class="at-tag">${a.area} • ${a.tag}</span>
-          <span style="color:var(--accent-emerald); font-weight:700;">AIマッチ度: 99.4%</span>
-        </div>
-        <div class="at-name">${a.name}</div>
-        <div class="at-desc">${a.desc}</div>
-        <div class="at-bottom">
-          <div>
-            <div style="font-size:0.58rem; color:var(--text-sub);">希望買売価格</div>
-            <div class="at-price">¥ ${a.price}</div>
+    function renderStream() {
+      const streamEl = document.getElementById('assetStream');
+      streamEl.innerHTML = globalAssets.map(a => `
+        <div class="asset-tile">
+          <div class="at-top">
+            <span class="at-tag">${a.area} • ${a.tag}</span>
+            <span style="color:var(--accent-emerald); font-weight:700;">ZKP Match: 99.9%</span>
           </div>
-          <button class="btn-action-glow" onclick="openSecureModal('${a.name}', '${a.price}')">1タップNDA ＆ 購入申請</button>
+          <div class="at-name">${a.name}</div>
+          <div class="at-desc">${a.desc}</div>
+          <div class="at-bottom">
+            <div>
+              <div style="font-size:0.55rem; color:var(--text-sub);">Valuation</div>
+              <div class="at-price">${formatPrice(a.rawPrice)}</div>
+            </div>
+            <button class="btn-action-glow" onclick="executeGlobalCheckout('${a.name}')">Global Stripe Escrow Checkout</button>
+          </div>
         </div>
-      </div>
-    `).join('');
-
-    /* 4. モーダル制御 */
-    function openSecureModal(name, price) {
-      document.getElementById('modalHeadTitle').innerText = "【" + name + "】安全買収手続き";
-      document.getElementById('modalHeadPrice').innerText = "希望買売価格：¥ " + price;
-      document.getElementById('secureModalOverlay').style.display = 'flex';
+      `).join('');
     }
-    function confirmSecureDeal() {
-      document.getElementById('secureModalOverlay').style.display = 'none';
-      alert("【セキュアチャネル開通】デジタルNDAの締結が完了しました！売主企業との直接交渉および詳細財務データの閲覧が可能です。");
+    renderStream();
+
+    function changeCurrency() {
+      currentCurr = document.getElementById('currSelect').value;
+      renderStream();
     }
 
-    /* 5. 売り手AI査定 */
-    function executeValuation() {
+    async function executeGlobalCheckout(name) {
+      if(confirm(`[Global Omnibus] Acquire "${name}" via Stripe Global Connect & Cross-Border Escrow?`)) {
+        alert("Stripe Global Checkout session initiated. Funds secured in escrow account.");
+      }
+    }
+
+    async function executeGlobalValuation() {
       const title = document.getElementById('bizTitle').value;
-      const sales = document.getElementById('bizSalesVal').value;
-      if(!title) { alert("事業名を入力してください。"); return; }
-      alert(`「${title}」のAI自動査定完了！\n推定企業価値：約 ${sales ? parseInt(sales)*2.2 : 6000} 万円\nノンネーム（完全匿名）でグローバル市場へ即時出品されました。`);
+      const sales = parseFloat(document.getElementById('bizSalesVal').value) || 0;
+      if(!title) { alert("Please enter asset title."); return; }
+      alert(`[AI Valuation Complete] "${title}"\nEstimated Enterprise Value: ${formatPrice(sales * 2.5)}\nSynced across New York, London, and Tokyo liquidity pools.`);
       switchMode('buy');
     }
 
-    /* 6. リアルタイムチャート描画 */
+    function triggerGlobalHarvest() {
+      alert("Stripe Global Payout API executed successfully. Funds distributed to your primary account.");
+    }
+
     const chartEl = document.getElementById('liveChart');
     const chCtx = chartEl.getContext('2d');
     function renderLiveChart() {
       chartEl.width = chartEl.clientWidth; chartEl.height = chartEl.clientHeight;
       chCtx.clearRect(0,0,chartEl.width,chartEl.height);
-      chCtx.beginPat
+      chCtx.beginPath();
+      chCtx.strokeStyle = '#38bdf8'; chCtx.lineWidth = 2.5;
+      for(let i=0; i<18; i++) {
+        let px = (i / 17) * chartEl.width;
+        let py = chartEl.height - (Math.sin(i * 0.35 + Date.now()*0.002) * (chartEl.height*0.3) + chartEl.height*0.5);
+        if(i===0) chCtx.moveTo(px,py); else chCtx.lineTo(px,py);
+      }
+      chCtx.stroke();
+      requestAnimationFrame(renderLiveChart);
+    }
+    renderLiveChart();
+
+    let totalRev = 28450000;
+    setInterval(() => {
+      totalRev += Math.floor(Math.random() * 55000) + 20000;
+      document.getElementById('monthRev').innerText = "¥ " + totalRev.toLocaleString();
+    }, 2500);
+
+    const
